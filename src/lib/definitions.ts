@@ -26,3 +26,18 @@ export const classSchema = z.object({
   ]),
   remarks: z.string(),
 });
+
+export const classArraySchema = z.array(classSchema);
+
+export const courseSchema = z.object({
+  courseCode: z.string(),
+  classes: classArraySchema,
+  last_fetched: z.date(),
+});
+
+export const courseArraySchema = z.array(courseSchema);
+
+export type Schedule = z.infer<typeof scheduleSchema>;
+export type Class = z.infer<typeof classSchema>;
+export type Course = z.infer<typeof courseSchema>;
+export type course = z.infer<typeof courseArraySchema>;
