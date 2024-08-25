@@ -4,14 +4,14 @@ import { Course, courseArraySchema, courseSchema } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Button } from "./ui/button";
+import CourseInput from "./CourseInput";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const CourseCodes = () => {
-  const [code, setCode] = useState<string>("");
   const [courses, setCourses] = useState<Course[]>([]);
 
-  const handleFetch = async () => {
-    const code = "GEETHIC";
-    const data = await fetchCourse(code);
+  const handleFetch = async (courseCode: string) => {
+    const data = await fetchCourse(courseCode);
     const newCourses = [...courses, data];
 
     setCourses(newCourses);
@@ -29,9 +29,18 @@ const CourseCodes = () => {
   }, []);
 
   return (
-    <div>
-      <Button onClick={handleFetch}>Fetch Sample Course</Button>
-      <p>{JSON.stringify(courses)}</p>
+    <div className="flex gap-4 flex-row">
+      <Card>
+        <CardContent className="pt-6">
+          <CourseInput fetchHandler={handleFetch} />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Sample Data</CardTitle>
+        </CardHeader>
+        <CardContent>{JSON.stringify(courses[0])}</CardContent>
+      </Card>
     </div>
   );
 };
