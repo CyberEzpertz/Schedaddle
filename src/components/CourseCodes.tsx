@@ -1,8 +1,7 @@
 "use client";
 import fetchCourse from "@/lib/actions";
-import { Course, courseArraySchema, courseSchema } from "@/lib/definitions";
+import { Course } from "@/lib/definitions";
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { Button } from "./ui/button";
 import CourseInput from "./CourseInput";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -19,6 +18,19 @@ const CourseCodes = () => {
 
     setCourses(newCourses);
     localStorage.setItem("courses", JSON.stringify(newCourses));
+  };
+
+  const handleDelete = (courseCode: string) => {
+    const newCourses = courses.filter(
+      (course) => course.courseCode !== courseCode
+    );
+
+    if (activeCourse?.courseCode === courseCode) {
+      setActiveCourse(null);
+    }
+
+    localStorage.setItem("courses", JSON.stringify(newCourses));
+    setCourses(newCourses);
   };
 
   // Initialize the stored codes from local storage on component mount
@@ -61,6 +73,7 @@ const CourseCodes = () => {
                   size="icon"
                   className="shrink-0 hover:border-rose-700"
                   variant="outline"
+                  onClick={() => handleDelete(course.courseCode)}
                 >
                   X
                 </Button>
