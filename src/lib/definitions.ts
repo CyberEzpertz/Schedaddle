@@ -16,14 +16,8 @@ export const classSchema = z.object({
   enrolled: z.number(),
   enrollCap: z.number(),
   rooms: z.array(z.string()),
-  restriction: z.enum(["NONE", "FROSH", "RESTRICTED"]),
-  modality: z.enum([
-    "TENTATIVE",
-    "HYBRID",
-    "F2F",
-    "ONLINE",
-    "PREDOMINANTLY ONLINE",
-  ]),
+  restriction: z.string(),
+  modality: z.string(),
   remarks: z.string(),
 });
 
