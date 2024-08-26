@@ -2,8 +2,10 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -15,20 +17,46 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  activeCourse: string | null;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  activeCourse,
 }: DataTableProps<TData, TValue>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  useEffect(() => {
+    if (activeCourse) {
+      setColumnFilters([
+        {
+          id: "courseCode",
+          value: activeCourse,
+        },
+      ]);
+    }
+  }, [activeCourse]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
+    initialState: {
+      columnVisibility: {
+        courseCode: false,
+      },
+    },
   });
 
   return (
