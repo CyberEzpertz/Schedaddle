@@ -6,6 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  RowSelectionState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -17,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -25,32 +26,48 @@ interface DataTableProps<TData, TValue> {
   activeCourse: string | null;
 }
 
+let initialMount = false;
+
 export function DataTable<TData, TValue>({
   columns,
   data,
   activeCourse,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   useEffect(() => {
-    if (activeCourse) {
-      setColumnFilters([
-        {
-          id: "courseCode",
-          value: activeCourse,
-        },
-      ]);
+    if (!activeCourse) return;
+
+    const stored = localStorage.getItem("selectedRows_" + activeCourse);
+    const parsed = stored !== null ? JSON.parse(stored) : null;
+
+    if (parsed) {
+      setRowSelection(parsed);
     }
+
+    setColumnFilters([
+      {
+        id: "courseCode",
+        value: activeCourse,
+      },
+    ]);
+
+    return () => {
+      initialMount = false;
+    };
   }, [activeCourse]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnFilters,
+      rowSelection,
     },
     initialState: {
       columnVisibility: {
@@ -58,6 +75,30 @@ export function DataTable<TData, TValue>({
       },
     },
   });
+
+  useEffect(() => {
+    console.log(`Init: ${initialMount}`);
+
+    if (!activeCourse || !initialMount) {
+      initialMount = true;
+      return;
+    }
+
+    localStorage.setItem(
+      "selectedRows_" + activeCourse,
+      JSON.stringify(rowSelection)
+    );
+
+    const selectedData = localStorage.getItem("selected_data");
+    const parsedData = selectedData !== null ? JSON.parse(selectedData) : {};
+    const selectedRowsData = Object.keys(rowSelection).map(
+      (rowId) => data[Number.parseInt(rowId)]
+    );
+
+    parsedData[activeCourse] = selectedRowsData;
+
+    localStorage.setItem("selected_data", JSON.stringify(parsedData));
+  }, [activeCourse, rowSelection, data]);
 
   return (
     <div className="rounded-md border">

@@ -12,7 +12,7 @@ import { toast } from "./ui/use-toast";
 
 const CourseCodes = () => {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [activeCourse, setActiveCourse] = useState<string | null>(null);
+  const [activeCourse, setActiveCourse] = useState<Course | null>(null);
 
   const handleFetch = async (courseCode: string) => {
     if (courses.some((course) => course.courseCode === courseCode)) {
@@ -37,7 +37,7 @@ const CourseCodes = () => {
       (course) => course.courseCode !== courseCode
     );
 
-    if (activeCourse === courseCode) {
+    if (activeCourse?.courseCode === courseCode) {
       setActiveCourse(null);
     }
 
@@ -52,11 +52,13 @@ const CourseCodes = () => {
 
     if (parsed) {
       setCourses(parsed);
+      if (parsed.length !== 0) {
+        setActiveCourse(parsed[0]);
+      }
     }
   }, []);
 
-  const schedules = createSchedules(courses);
-  console.log(schedules);
+  // const schedules = createSchedules(courses);
 
   return (
     <div className="flex gap-4 flex-row">
@@ -75,9 +77,11 @@ const CourseCodes = () => {
               <div key={course.courseCode} className="flex flex-row gap-2">
                 <Button
                   variant={
-                    activeCourse === course.courseCode ? "default" : "outline"
+                    activeCourse?.courseCode === course.courseCode
+                      ? "default"
+                      : "outline"
                   }
-                  onClick={() => setActiveCourse(course.courseCode)}
+                  onClick={() => setActiveCourse(course)}
                   className="w-full"
                 >
                   {course.courseCode}
@@ -99,8 +103,8 @@ const CourseCodes = () => {
         {activeCourse && (
           <DataTable
             columns={columns}
-            data={courses.flatMap((course) => course.classes)}
-            activeCourse={activeCourse}
+            data={activeCourse.classes}
+            activeCourse={activeCourse.courseCode}
           />
         )}
       </div>
