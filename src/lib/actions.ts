@@ -1,8 +1,8 @@
 "use server";
 
-import { classArraySchema, Course, courseArraySchema } from "./definitions";
+import { classArraySchema, Course } from "./definitions";
 
-export default async function fetchCourse(courseCode: string) {
+export async function fetchCourse(courseCode: string) {
   const id = process.env.ID_NUMBER;
 
   const res = await fetch(

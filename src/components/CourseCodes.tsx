@@ -1,5 +1,5 @@
 "use client";
-import fetchCourse from "@/lib/actions";
+import { fetchCourse } from "@/lib/actions";
 import { Course } from "@/lib/definitions";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
@@ -45,7 +45,7 @@ const CourseCodes = () => {
 
   return (
     <div className="flex gap-4 flex-row">
-      <div>
+      <div className="flex flex-col gap-4">
         <Card>
           <CardContent className="pt-6">
             <CourseInput fetchHandler={handleFetch} />
