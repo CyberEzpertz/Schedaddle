@@ -1,17 +1,8 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Class } from "@/lib/definitions";
-import { cn, convertTime, toProperCase } from "@/lib/utils";
+import { cn, convertTime, daysEnum, toProperCase } from "@/lib/utils";
 import { useState } from "react";
-
-enum daysEnum {
-  "M",
-  "T",
-  "W",
-  "H",
-  "F",
-  "S",
-}
 
 const CELL_SIZE_PX = 56;
 const CELL_HEIGHT = "h-14";

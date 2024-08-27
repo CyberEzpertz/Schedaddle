@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useRef, useState } from "react";
+import { getLocalStorage, modifySelectedData } from "@/lib/utils";
+import { Class } from "@/lib/definitions";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,19 +41,13 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     if (!activeCourse) return;
 
-    const stored = localStorage.getItem("selectedRows_" + activeCourse);
-    const parsed = stored !== null ? JSON.parse(stored) : null;
+    const parsed = getLocalStorage("selectedRows_" + activeCourse);
 
     if (parsed) {
+      console.log(`PARSED:`);
+      console.log(parsed);
       setRowSelection(parsed);
     }
-
-    setColumnFilters([
-      {
-        id: "courseCode",
-        value: activeCourse,
-      },
-    ]);
 
     return () => {
       initialMount = false;
@@ -77,8 +73,6 @@ export function DataTable<TData, TValue>({
   });
 
   useEffect(() => {
-    console.log(`Init: ${initialMount}`);
-
     if (!activeCourse || !initialMount) {
       initialMount = true;
       return;
@@ -89,15 +83,11 @@ export function DataTable<TData, TValue>({
       JSON.stringify(rowSelection)
     );
 
-    const selectedData = localStorage.getItem("selected_data");
-    const parsedData = selectedData !== null ? JSON.parse(selectedData) : {};
     const selectedRowsData = Object.keys(rowSelection).map(
       (rowId) => data[Number.parseInt(rowId)]
     );
 
-    parsedData[activeCourse] = selectedRowsData;
-
-    localStorage.setItem("selected_data", JSON.stringify(parsedData));
+    modifySelectedData(activeCourse, selectedRowsData as Class[]);
   }, [activeCourse, rowSelection, data]);
 
   return (

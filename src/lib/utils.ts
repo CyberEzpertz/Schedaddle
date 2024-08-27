@@ -77,3 +77,36 @@ export function toProperCase(val: string) {
     .toLowerCase()
     .replace(/((?<=( |-)|^).)/g, (s) => s.toUpperCase());
 }
+
+export function getLocalStorage(name: string) {
+  const stored = localStorage.getItem(name);
+  const parsed = stored !== null ? JSON.parse(stored) : null;
+
+  return parsed;
+}
+
+export function modifySelectedData(
+  courseCode: string,
+  data: Class[] | "DELETE"
+) {
+  const selectedData = getLocalStorage("selected_data") ?? {};
+
+  if (data === "DELETE") {
+    delete selectedData[courseCode];
+    localStorage.setItem("selected_data", JSON.stringify(selectedData));
+    return;
+  }
+
+  selectedData[courseCode] = data;
+  localStorage.setItem("selected_data", JSON.stringify(selectedData));
+  return;
+}
+
+export enum daysEnum {
+  "M",
+  "T",
+  "W",
+  "H",
+  "F",
+  "S",
+}

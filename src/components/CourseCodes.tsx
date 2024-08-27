@@ -7,7 +7,11 @@ import CourseInput from "./CourseInput";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DataTable } from "./courseTable/data-table";
 import { columns } from "./courseTable/columns";
-import { createSchedules } from "@/lib/utils";
+import {
+  createSchedules,
+  getLocalStorage,
+  modifySelectedData,
+} from "@/lib/utils";
 import { toast } from "./ui/use-toast";
 
 const CourseCodes = () => {
@@ -42,13 +46,16 @@ const CourseCodes = () => {
     }
 
     localStorage.setItem("courses", JSON.stringify(newCourses));
+    localStorage.removeItem(`selectedRows_${courseCode}`);
+
+    modifySelectedData(courseCode, "DELETE");
+
     setCourses(newCourses);
   };
 
   // Initialize the stored codes from local storage on component mount
   useEffect(() => {
-    const stored = localStorage.getItem("courses");
-    const parsed = stored !== null ? JSON.parse(stored) : null;
+    const parsed = getLocalStorage("courses");
 
     if (parsed) {
       setCourses(parsed);
@@ -57,8 +64,6 @@ const CourseCodes = () => {
       }
     }
   }, []);
-
-  // const schedules = createSchedules(courses);
 
   return (
     <div className="flex gap-4 flex-row">

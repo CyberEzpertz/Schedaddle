@@ -20,10 +20,11 @@ const ScheduleTab = (props: Props) => {
     const parsedSelected =
       storedSelected !== null ? JSON.parse(storedSelected) : null;
 
-    if (!parsedSelected) {
+    if (!parsedSelected || parsedSelected.lengthh) {
       toast({
-        title: "Invalid Generation!",
-        description: "Select some classes first before generating.",
+        title: "Uh oh! Generation of schedules failed...",
+        description: "No schedules could be made with your selection...",
+        variant: "destructive",
       });
       return;
     }
@@ -33,6 +34,15 @@ const ScheduleTab = (props: Props) => {
 
     const selectedData = Object.entries(safeSelected).map(([_, val]) => val);
     const newSchedules = createSchedules(selectedData);
+
+    if (newSchedules.length === 0) {
+      toast({
+        title: "Uh oh! Generation of schedules failed...",
+        description: "No schedules could be made with your selection...",
+        variant: "destructive",
+      });
+      return;
+    }
     setSchedules(newSchedules);
 
     localStorage.setItem("schedules", JSON.stringify(newSchedules));

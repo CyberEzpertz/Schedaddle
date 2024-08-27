@@ -31,7 +31,7 @@ const CourseInput = ({ fetchHandler }: props) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    fetchHandler(values.courseCode);
+    fetchHandler(values.courseCode.toUpperCase());
   }
 
   return (
