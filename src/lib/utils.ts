@@ -24,7 +24,7 @@ function doClassesOverlap(sched1: Schedule[], sched2: Schedule[]) {
   return false;
 }
 
-export function createSchedules(courses: Course[]) {
+export function createSchedules(courses: Class[][]) {
   // This will store all currently made schedules.
   let createdScheds: Class[][] = [[]];
 
@@ -41,7 +41,7 @@ export function createSchedules(courses: Course[]) {
 
       // Check if overlap between any of the classes inside the combinations
       // and the current course class.
-      for (const courseClass of course.classes) {
+      for (const courseClass of course) {
         const overlap = combo.some((comboClass) =>
           doClassesOverlap(courseClass.schedules, comboClass.schedules)
         );
@@ -60,4 +60,20 @@ export function createSchedules(courses: Course[]) {
   }
 
   return createdScheds;
+}
+
+export function convertTime(time: number) {
+  const hour = Math.floor(time / 100);
+  const minutes = time % 100;
+
+  return `${hour > 12 ? hour - 12 : hour}:${
+    minutes > 10 ? "" : "0"
+  }${minutes} ${hour >= 12 ? "PM" : "AM"}`;
+}
+
+export function toProperCase(val: string) {
+  return val
+    .replaceAll("_", " ")
+    .toLowerCase()
+    .replace(/((?<=( |-)|^).)/g, (s) => s.toUpperCase());
 }
