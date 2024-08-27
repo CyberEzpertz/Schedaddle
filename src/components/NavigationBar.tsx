@@ -5,6 +5,7 @@ import { Card } from "./ui/card";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 import { usePathname } from "next/navigation";
+import { ModeToggle } from "./ModeToggle";
 
 type Props = {};
 
@@ -20,17 +21,23 @@ const NavigationBar = () => {
   });
 
   return (
-    <Card className="p-4 flex items-center justify-center gap-2 w-60">
-      <Link href="/" className={pathName === "/" ? activeButton : normalButton}>
-        Courses
-      </Link>
-      <Link
-        href="/schedules"
-        className={pathName === "/schedules" ? activeButton : normalButton}
-      >
-        Schedules
-      </Link>
-    </Card>
+    <div className="p-4 flex items-center justify-center gap-2 w-full border-b">
+      <div>
+        <Link
+          href="/"
+          className={pathName === "/" ? activeButton : normalButton}
+        >
+          Courses
+        </Link>
+        <Link
+          href="/schedules"
+          className={pathName === "/schedules" ? activeButton : normalButton}
+        >
+          Schedules
+        </Link>
+      </div>
+      <ModeToggle />
+    </div>
   );
 };
 

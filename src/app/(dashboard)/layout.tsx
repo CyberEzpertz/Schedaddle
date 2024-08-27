@@ -11,9 +11,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+    <>
       <NavigationBar />
-      {children}
-    </div>
+      <div className="flex flex-col items-center justify-center min-h-0 gap-4 grow">
+        {children}
+      </div>
+    </>
   );
 }

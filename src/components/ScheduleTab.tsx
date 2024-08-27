@@ -57,10 +57,10 @@ const ScheduleTab = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-row w-4/5">
-      <div>
+    <div className="flex flex-row w-4/5 h-4/5">
+      <div className="flex flex-col">
         <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
-        <Card className="h-96 overflow-auto">
+        <Card className="h-full overflow-auto">
           <div className="p-4 flex flex-col gap-2">
             {schedules.map((sched, i) => (
               <Button

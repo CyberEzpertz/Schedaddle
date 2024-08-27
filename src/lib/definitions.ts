@@ -1,3 +1,4 @@
+import { tree } from "next/dist/build/templates/app-page";
 import { z } from "zod";
 
 export const scheduleSchema = z.object({
@@ -5,6 +6,7 @@ export const scheduleSchema = z.object({
   start: z.number(),
   end: z.number(),
   date: z.string(),
+  isOnline: z.boolean(),
 });
 
 export const classSchema = z.object({

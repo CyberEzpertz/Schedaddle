@@ -21,6 +21,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { getLocalStorage, modifySelectedData } from "@/lib/utils";
 import { Class } from "@/lib/definitions";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -91,14 +92,17 @@ export function DataTable<TData, TValue>({
   }, [activeCourse, rowSelection, data]);
 
   return (
-    <div className="rounded-md border">
+    <ScrollArea className="w-full rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className={header.column.columnDef.meta?.headerClassName}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -119,7 +123,10 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell
+                    key={cell.id}
+                    className={cell.column.columnDef.meta?.cellClassName}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -134,6 +141,6 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   );
 }

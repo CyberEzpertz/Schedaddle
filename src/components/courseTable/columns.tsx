@@ -42,6 +42,9 @@ export const columns: ColumnDef<Class>[] = [
       return row.professor?.length !== 0 ? row.professor : "-";
     },
     header: "Professor",
+    meta: {
+      headerClassName: "w-[300px] nowrap",
+    },
   },
   {
     header: "Enrolled",
@@ -56,6 +59,9 @@ export const columns: ColumnDef<Class>[] = [
 
       return filtered.join(", ");
     },
+    meta: {
+      headerClassName: "w-[100px]",
+    },
   },
   {
     header: "Days",
@@ -67,6 +73,9 @@ export const columns: ColumnDef<Class>[] = [
   {
     header: "Modality",
     accessorKey: "modality",
+    meta: {
+      headerClassName: "w-[100px]",
+    },
   },
   {
     header: "Restriction",

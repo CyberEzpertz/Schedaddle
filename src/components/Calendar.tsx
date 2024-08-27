@@ -82,7 +82,7 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
     "relative h-full w-full text-center rounded-lg py-2 px-2 mx-2 font-bold text-slate-400";
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="flex h-full w-full flex-col">
       {/* Day Indicator Row */}
       <div className="flex w-full flex-row border-b border-slate-800 py-1">
         <div className="w-[50px] shrink-0"></div>

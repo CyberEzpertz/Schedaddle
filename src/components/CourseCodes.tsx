@@ -66,7 +66,7 @@ const CourseCodes = () => {
   }, []);
 
   return (
-    <div className="flex gap-4 flex-row">
+    <div className="flex gap-4 flex-row h-4/5 overflow-hidden w-4/5">
       <div className="flex flex-col gap-4">
         <Card>
           <CardContent className="pt-6">
@@ -104,15 +104,13 @@ const CourseCodes = () => {
           </CardContent>
         </Card>
       </div>
-      <div>
-        {activeCourse && (
-          <DataTable
-            columns={columns}
-            data={activeCourse.classes}
-            activeCourse={activeCourse.courseCode}
-          />
-        )}
-      </div>
+      {activeCourse && (
+        <DataTable
+          columns={columns}
+          data={activeCourse.classes}
+          activeCourse={activeCourse.courseCode}
+        />
+      )}
     </div>
   );
 };
