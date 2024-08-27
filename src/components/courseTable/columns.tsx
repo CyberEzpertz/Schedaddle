@@ -33,6 +33,7 @@ export const columns: ColumnDef<Class>[] = [
   {
     accessorKey: "code",
     header: "Code",
+    filterFn: "includesString",
   },
   {
     accessorKey: "section",
@@ -72,12 +73,14 @@ export const columns: ColumnDef<Class>[] = [
   {
     header: "Days",
     accessorFn: (row) => {
-      const days = row.schedules.map((sched) => sched.day);
+      const days = [...new Set(row.schedules.map((sched) => sched.day))];
+
       if (days.length === 4)
         return `${days.slice(0, 2).join("")}/${days.slice(2).join("")}`;
 
       return days.join("/");
     },
+    filterFn: "arrIncludesSome",
   },
   {
     id: "modality",
@@ -85,6 +88,7 @@ export const columns: ColumnDef<Class>[] = [
     meta: {
       headerClassName: "w-[100px]",
     },
+    filterFn: "arrIncludesSome",
   },
   {
     id: "restriction",
