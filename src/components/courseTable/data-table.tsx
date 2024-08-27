@@ -6,7 +6,9 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
   RowSelectionState,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -38,6 +40,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   useEffect(() => {
     if (!activeCourse) return;
@@ -62,13 +65,18 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     state: {
       columnFilters,
       rowSelection,
+      sorting,
     },
     initialState: {
       columnVisibility: {
         courseCode: false,
+        modality: false,
+        restriction: false,
       },
     },
   });

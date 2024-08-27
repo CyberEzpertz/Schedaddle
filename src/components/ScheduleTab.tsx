@@ -37,8 +37,17 @@ const ScheduleTab = (props: Props) => {
 
     if (newSchedules.length === 0) {
       toast({
-        title: "Uh oh! Generation of schedules failed...",
-        description: "No schedules could be made with your selection...",
+        title: "Uh oh! No schedules could be generated.",
+        description:
+          "Try selecting more classes that don't conflict with each other.",
+        variant: "destructive",
+      });
+      return;
+    } else if (newSchedules.length >= 2048) {
+      toast({
+        title: "Uh oh! Too many classes will be generated.",
+        description:
+          "Narrow down your options and select less classes, then generate again.",
         variant: "destructive",
       });
       return;

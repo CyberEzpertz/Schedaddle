@@ -3,6 +3,7 @@
 import { Class } from "@/lib/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
+import { SortableHeader } from "./SortableHeader";
 
 export const columns: ColumnDef<Class>[] = [
   {
@@ -35,16 +36,21 @@ export const columns: ColumnDef<Class>[] = [
   },
   {
     accessorKey: "section",
-    header: "Section",
+    header: ({ column }) => (
+      <SortableHeader column={column} title={"Section"} />
+    ),
   },
   {
     accessorFn: (row) => {
       return row.professor?.length !== 0 ? row.professor : "-";
     },
-    header: "Professor",
     meta: {
       headerClassName: "w-[300px] nowrap",
     },
+    header: ({ column }) => (
+      <SortableHeader column={column} title={"Professor"} />
+    ),
+    id: "Professor",
   },
   {
     header: "Enrolled",
@@ -67,18 +73,21 @@ export const columns: ColumnDef<Class>[] = [
     header: "Days",
     accessorFn: (row) => {
       const days = row.schedules.map((sched) => sched.day);
+      if (days.length === 4)
+        return `${days.slice(0, 2).join("")}/${days.slice(2).join("")}`;
+
       return days.join("/");
     },
   },
   {
-    header: "Modality",
+    id: "modality",
     accessorKey: "modality",
     meta: {
       headerClassName: "w-[100px]",
     },
   },
   {
-    header: "Restriction",
+    id: "restriction",
     accessorKey: "restriction",
   },
   {

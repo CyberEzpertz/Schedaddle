@@ -73,11 +73,11 @@ const CourseCodes = () => {
             <CourseInput fetchHandler={handleFetch} />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="grow">
           <CardHeader>
             <CardTitle>Course Codes</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex gap-2 row flex-col">
             {courses.map((course) => (
               <div key={course.courseCode} className="flex flex-row gap-2">
                 <Button
