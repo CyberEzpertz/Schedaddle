@@ -38,7 +38,9 @@ export const columns: ColumnDef<Class>[] = [
     header: "Section",
   },
   {
-    accessorKey: "professor",
+    accessorFn: (row) => {
+      return row.professor?.length !== 0 ? row.professor : "-";
+    },
     header: "Professor",
   },
   {
