@@ -66,7 +66,7 @@ const CourseCodes = () => {
   }, []);
 
   return (
-    <div className="flex gap-4 flex-row h-4/5 overflow-hidden w-4/5">
+    <div className="flex gap-4 flex-row h-4/5 px-32 w-full">
       <div className="flex flex-col gap-4">
         <Card>
           <CardContent className="pt-6">

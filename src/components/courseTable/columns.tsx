@@ -1,9 +1,12 @@
 "use client";
 
-import { Class } from "@/lib/definitions";
+import { Class, Schedule } from "@/lib/definitions";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { SortableHeader } from "./SortableHeader";
+import { Badge } from "../ui/badge";
+import { MapPin, Wifi } from "lucide-react";
+import { convertTime } from "@/lib/utils";
 
 export const columns: ColumnDef<Class>[] = [
   {
@@ -27,6 +30,9 @@ export const columns: ColumnDef<Class>[] = [
         aria-label="Select row"
       />
     ),
+    meta: {
+      headerClassName: "w-10",
+    },
     enableSorting: false,
     enableHiding: false,
   },
@@ -34,11 +40,14 @@ export const columns: ColumnDef<Class>[] = [
     accessorKey: "code",
     header: "Code",
     filterFn: "includesString",
+    meta: {
+      headerClassName: "w-12",
+    },
   },
   {
     accessorKey: "section",
     header: ({ column }) => (
-      <SortableHeader column={column} title={"Section"} />
+      <SortableHeader className="w-16" column={column} title={"Section"} />
     ),
   },
   {
@@ -54,8 +63,33 @@ export const columns: ColumnDef<Class>[] = [
     id: "Professor",
   },
   {
-    header: "Enrolled",
-    accessorFn: (row) => `${row.enrolled}/${row.enrollCap}`,
+    header: "Schedules",
+    cell: ({ row }) => {
+      const schedules = row.original.schedules.reduce<Schedule[]>(
+        (acc, curr) => {
+          if (
+            !acc.some((acc) => acc.start === curr.start && acc.end === curr.end)
+          )
+            acc.push(curr);
+          return acc;
+        },
+        []
+      );
+      return (
+        <div className="flex flex-col gap-1">
+          {schedules.map((sched, i) => (
+            <Badge
+              key={i}
+              variant="outline"
+              className={`dark:bg-gray-950 dark:text-gray-50 select-none flex gap-2 rounded-lg p-2 px-4 font-medium w-[180px] shadow-lg justify-center items-center`}
+            >
+              {/* {sched.isOnline ? <Wifi size={16} /> : <MapPin size={16} />} */}
+              {`${convertTime(sched.start)} - ${convertTime(sched.end)}`}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
   },
   {
     header: "Room",
@@ -83,6 +117,11 @@ export const columns: ColumnDef<Class>[] = [
     filterFn: "arrIncludesSome",
   },
   {
+    header: "Enrolled",
+    accessorFn: (row) => `${row.enrolled}/${row.enrollCap}`,
+  },
+
+  {
     id: "modality",
     accessorKey: "modality",
     meta: {
@@ -94,10 +133,12 @@ export const columns: ColumnDef<Class>[] = [
     id: "restriction",
     accessorKey: "restriction",
   },
+
   {
     header: "Remarks",
     accessorKey: "remarks",
   },
+
   {
     id: "courseCode",
     accessorKey: "course",
