@@ -1,5 +1,17 @@
 import { tree } from "next/dist/build/templates/app-page";
-import { z } from "zod";
+import { number, z } from "zod";
+
+export type DaysEnum = "M" | "T" | "W" | "H" | "F" | "S";
+
+const ModalityEnum = z.enum([
+  "HYBRID",
+  "F2F",
+  "ONLINE",
+  "PREDOMINANTLY ONLINE",
+  "TENTATIVE",
+]);
+
+export type ModalityEnum = z.infer<typeof ModalityEnum>;
 
 export const scheduleSchema = z.object({
   day: z.enum(["M", "T", "W", "H", "F", "S", "U"]),
@@ -19,7 +31,7 @@ export const classSchema = z.object({
   enrollCap: z.number(),
   rooms: z.array(z.string()),
   restriction: z.string(),
-  modality: z.string(),
+  modality: ModalityEnum,
   remarks: z.string(),
 });
 
@@ -32,8 +44,28 @@ export const courseSchema = z.object({
 });
 
 export const courseArraySchema = z.array(courseSchema);
-
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type Class = z.infer<typeof classSchema>;
 export type Course = z.infer<typeof courseSchema>;
-export type course = z.infer<typeof courseArraySchema>;
+
+export interface FilterOptions {
+  start: number;
+  end: number;
+  maxPerDay: number;
+  maxConsecutive: number;
+  modalities: ModalityEnum[];
+  daysInPerson: DaysEnum[];
+}
+
+export interface Filter {
+  general: FilterOptions;
+  specific: {
+    M?: FilterOptions;
+    T?: FilterOptions;
+    W?: FilterOptions;
+    H?: FilterOptions;
+    F?: FilterOptions;
+    S?: FilterOptions;
+    U?: FilterOptions;
+  };
+}

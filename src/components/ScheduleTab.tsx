@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Class, classSchema } from "@/lib/definitions";
+import { Class, classSchema, Filter } from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
 import { createSchedules } from "@/lib/utils";
 import { z } from "zod";
@@ -32,8 +32,25 @@ const ScheduleTab = (props: Props) => {
       .record(z.string(), z.array(classSchema))
       .parse(parsedSelected);
 
+    const sampleFilter: Filter = {
+      general: {
+        start: 915,
+        end: 1600,
+        daysInPerson: ["H"],
+        modalities: [
+          "F2F",
+          "HYBRID",
+          "ONLINE",
+          "PREDOMINANTLY ONLINE",
+          "TENTATIVE",
+        ],
+        maxConsecutive: 3,
+        maxPerDay: 3,
+      },
+      specific: {},
+    };
     const selectedData = Object.entries(safeSelected).map(([_, val]) => val);
-    const newSchedules = createSchedules(selectedData);
+    const newSchedules = createSchedules(selectedData, sampleFilter);
 
     if (newSchedules.length === 0) {
       toast({
@@ -52,8 +69,13 @@ const ScheduleTab = (props: Props) => {
       });
       return;
     }
-    setSchedules(newSchedules);
 
+    // If no error occurs, just set schedules as normal.
+    setSchedules(newSchedules);
+    toast({
+      title: "Sucessfully generated schedules!",
+      description: `A total of ${newSchedules.length} were successfully generated.`,
+    });
     localStorage.setItem("schedules", JSON.stringify(newSchedules));
   };
 

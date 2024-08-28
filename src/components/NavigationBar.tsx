@@ -21,9 +21,9 @@ const NavigationBar = () => {
 
   return (
     <div className="p-4 flex items-center justify-between gap-2 w-full border-b px-32">
-      <div className="flex gap-2 font-extrabold text-lg items-center">
+      <Link href="/" className="flex gap-2 font-extrabold text-lg items-center">
         <CalendarRange /> SchedEZ
-      </div>
+      </Link>
       <div className="flex gap-2">
         <Link
           href="/"

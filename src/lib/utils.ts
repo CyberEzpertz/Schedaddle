@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Class, Course, Schedule } from "./definitions";
+import { Class, Course, Filter, ModalityEnum, Schedule } from "./definitions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,33 +24,37 @@ function doClassesOverlap(sched1: Schedule[], sched2: Schedule[]) {
   return false;
 }
 
-export function createSchedules(courses: Class[][]) {
+export function createSchedules(courses: Class[][], filter?: Filter) {
   // This will store all currently made schedules.
   let createdScheds: Class[][] = [[]];
+
+  if (filter) {
+    courses = filterInitialData(courses, filter);
+  }
 
   // First, iterate throughout all of the courses
   for (const course of courses) {
     // This will store the current combinations given the course and
-    // currently created schedules
+    // currently created schedules.
     const newCombinations: Class[][] = [];
 
     // Iterate throughout all the created scheds so far.
-    for (const combo of createdScheds) {
+    for (const currentSched of createdScheds) {
       // This flag is to indicate that at least 1 combination exists.
       let schedExists = false;
 
-      // Check if overlap between any of the classes inside the combinations
-      // and the current course class.
+      // Check if overlap between any of the classes inside the
+      // combinations and the current course class.
       for (const courseClass of course) {
-        const overlap = combo.some((comboClass) =>
-          doClassesOverlap(courseClass.schedules, comboClass.schedules)
+        const overlap = currentSched.some((schedClass) =>
+          doClassesOverlap(courseClass.schedules, schedClass.schedules)
         );
 
         // If there's an overlap, we can't add it to the schedule.
         if (overlap) continue;
 
         schedExists = true;
-        newCombinations.push([...combo, courseClass]);
+        newCombinations.push([...currentSched, courseClass]);
       }
 
       if (!schedExists) return [];
@@ -60,6 +64,29 @@ export function createSchedules(courses: Class[][]) {
   }
 
   return createdScheds;
+}
+
+export function filterInitialData(
+  courses: Class[][],
+  filter: Filter
+): Class[][] {
+  return courses.map((course) =>
+    course.filter((courseClass) => {
+      const isSchedInvalid = courseClass.schedules.some((sched) => {
+        const { start, end } = filter.specific[sched.day] ?? filter.general;
+
+        return sched.start < start || sched.end > end;
+      });
+
+      // Check if the course modality is valid
+      const isModalityValid = filter.general.modalities.includes(
+        courseClass.modality
+      );
+
+      // Keep the class if it passes both the schedule and modality filters
+      return !isSchedInvalid && isModalityValid;
+    })
+  );
 }
 
 export function convertTime(time: number) {
@@ -100,13 +127,4 @@ export function modifySelectedData(
   selectedData[courseCode] = data;
   localStorage.setItem("selected_data", JSON.stringify(selectedData));
   return;
-}
-
-export enum daysEnum {
-  "M",
-  "T",
-  "W",
-  "H",
-  "F",
-  "S",
 }
