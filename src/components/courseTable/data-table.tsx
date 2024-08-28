@@ -82,6 +82,7 @@ export function DataTable<TData, TValue>({
         courseCode: false,
         modality: false,
         restriction: false,
+        status: false,
       },
     },
   });
@@ -106,9 +107,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <div>
-        <FilterBar table={table} />
-      </div>
+      <FilterBar table={table} />
       <ScrollArea className="w-full rounded-md border overflow-hidden">
         <Table>
           <TableHeader>

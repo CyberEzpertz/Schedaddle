@@ -22,7 +22,7 @@ export function FilterBar<TData>({ table }: FilterBarProps<TData>) {
           onChange={(event) => {
             table.getColumn("code")?.setFilterValue(event.target.value);
           }}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-[150px]"
         />
         {table.getColumn("Days") && (
           <FacetedFilter column={table.getColumn("Days")} title="Days" />
@@ -32,6 +32,15 @@ export function FilterBar<TData>({ table }: FilterBarProps<TData>) {
             column={table.getColumn("modality")}
             title="Modality"
           />
+        )}
+        {table.getColumn("restriction") && (
+          <FacetedFilter
+            column={table.getColumn("restriction")}
+            title="Restriction"
+          />
+        )}
+        {table.getColumn("status") && (
+          <FacetedFilter column={table.getColumn("status")} title="Status" />
         )}
         {isFiltered && (
           <Button

@@ -102,4 +102,12 @@ export const columns: ColumnDef<Class>[] = [
     id: "courseCode",
     accessorKey: "course",
   },
+  {
+    id: "status",
+    accessorFn: (row) => {
+      const isClosed = row.enrolled >= row.enrollCap;
+
+      return isClosed ? "Closed" : "Open";
+    },
+  },
 ];
