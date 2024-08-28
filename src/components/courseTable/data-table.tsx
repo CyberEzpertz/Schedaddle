@@ -51,9 +51,9 @@ export function DataTable<TData, TValue>({
     const parsed = getLocalStorage("selectedRows_" + activeCourse);
 
     if (parsed) {
-      console.log(`PARSED:`);
-      console.log(parsed);
       setRowSelection(parsed);
+    } else {
+      setRowSelection({});
     }
 
     return () => {

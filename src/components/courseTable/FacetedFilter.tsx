@@ -33,7 +33,6 @@ export function FacetedFilter<TData, TValue>({
   const facets = column?.getFacetedUniqueValues();
   const options = facets ? [...facets.keys()] : [];
   const selectedValues = new Set(column?.getFilterValue() as string[]);
-  console.log(column?.getFilterValue());
 
   return (
     <Popover>
