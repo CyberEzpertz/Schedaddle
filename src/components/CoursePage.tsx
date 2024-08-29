@@ -1,7 +1,7 @@
 "use client";
 import { fetchCourse } from "@/lib/actions";
 import { Course } from "@/lib/definitions";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import CourseInput from "./CourseInput";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -13,10 +13,14 @@ import {
   modifySelectedData,
 } from "@/lib/utils";
 import { toast } from "./ui/use-toast";
+import { Reorder, useDragControls } from "framer-motion";
+import { DragHandleDots1Icon } from "@radix-ui/react-icons";
+import { GripVertical } from "lucide-react";
 
 const CoursePage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
+  const controls = useDragControls();
 
   const handleFetch = async (courseCode: string) => {
     if (courses.some((course) => course.courseCode === courseCode)) {
@@ -64,6 +68,11 @@ const CoursePage = () => {
     setCourses(newCourses);
   };
 
+  const handleSwap = useCallback((newCourses: Course[]) => {
+    setCourses(newCourses);
+    localStorage.setItem("courses", JSON.stringify(newCourses));
+  }, []);
+
   // Initialize the stored codes from local storage on component mount
   useEffect(() => {
     const data = getLocalStorage("courses");
@@ -93,30 +102,45 @@ const CoursePage = () => {
           <CardHeader>
             <CardTitle>Course Codes</CardTitle>
           </CardHeader>
-          <CardContent className="flex gap-2 row flex-col">
-            {courses.map((course) => (
-              <div key={course.courseCode} className="flex flex-row gap-2">
-                <Button
-                  variant={
-                    activeCourse?.courseCode === course.courseCode
-                      ? "default"
-                      : "outline"
-                  }
-                  onClick={() => setActiveCourse(course)}
-                  className="w-full"
+          <CardContent>
+            <Reorder.Group
+              className="flex gap-2 row flex-col"
+              axis="y"
+              values={courses}
+              onReorder={handleSwap}
+            >
+              {courses.map((course) => (
+                <Reorder.Item
+                  key={course.courseCode}
+                  value={course}
+                  className="flex flex-row gap-2 items-center"
                 >
-                  {course.courseCode}
-                </Button>
-                <Button
-                  size="icon"
-                  className="shrink-0 hover:border-rose-700"
-                  variant="outline"
-                  onClick={() => handleDelete(course.courseCode)}
-                >
-                  X
-                </Button>
-              </div>
-            ))}
+                  <GripVertical
+                    onPointerDown={(e) => controls.start(e)}
+                    className="shrink-0 text-gray-700 cursor-grab"
+                  />
+                  <Button
+                    variant={
+                      activeCourse?.courseCode === course.courseCode
+                        ? "default"
+                        : "outline"
+                    }
+                    onClick={() => setActiveCourse(course)}
+                    className="w-full"
+                  >
+                    {course.courseCode}
+                  </Button>
+                  <Button
+                    size="icon"
+                    className="shrink-0 hover:border-rose-700"
+                    variant="outline"
+                    onClick={() => handleDelete(course.courseCode)}
+                  >
+                    X
+                  </Button>
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
           </CardContent>
         </Card>
       </div>
