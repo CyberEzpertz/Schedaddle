@@ -6,7 +6,7 @@ import { Checkbox } from "../ui/checkbox";
 import { SortableHeader } from "./SortableHeader";
 import { Badge } from "../ui/badge";
 import { MapPin, Wifi } from "lucide-react";
-import { convertTime } from "@/lib/utils";
+import { convertTime, toProperCase } from "@/lib/utils";
 
 export const columns: ColumnDef<Class>[] = [
   {
@@ -47,12 +47,20 @@ export const columns: ColumnDef<Class>[] = [
   {
     accessorKey: "section",
     header: ({ column }) => (
-      <SortableHeader className="w-16" column={column} title={"Section"} />
+      <SortableHeader
+        className="min-w-12 max-w-16"
+        column={column}
+        title={"Section"}
+      />
     ),
+    meta: {
+      headerClassName: "w-20",
+    },
   },
   {
+    id: "Professor",
     accessorFn: (row) => {
-      return row.professor?.length !== 0 ? row.professor : "-";
+      return row.professor.length !== 0 ? toProperCase(row.professor) : "-";
     },
     meta: {
       headerClassName: "w-[300px] nowrap",
@@ -60,7 +68,6 @@ export const columns: ColumnDef<Class>[] = [
     header: ({ column }) => (
       <SortableHeader column={column} title={"Professor"} />
     ),
-    id: "Professor",
   },
   {
     header: "Schedules",
@@ -81,7 +88,7 @@ export const columns: ColumnDef<Class>[] = [
             <Badge
               key={i}
               variant="outline"
-              className={`dark:bg-gray-950 dark:text-gray-50 select-none flex gap-2 rounded-lg p-2 px-4 font-medium w-[180px] shadow-lg justify-center items-center`}
+              className={`dark:bg-gray-950 dark:text-gray-50 select-none flex gap-2 rounded-lg p-2 px-4 font-medium w-[160px] shadow-lg justify-center items-center`}
             >
               {/* {sched.isOnline ? <Wifi size={16} /> : <MapPin size={16} />} */}
               {`${convertTime(sched.start)} - ${convertTime(sched.end)}`}

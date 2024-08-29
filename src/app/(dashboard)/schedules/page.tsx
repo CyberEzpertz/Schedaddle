@@ -1,4 +1,4 @@
-import CourseCodes from "@/components/CourseCodes";
+import CoursePage from "@/components/CoursePage";
 import ScheduleTab from "@/components/ScheduleTab";
 
 type Props = {};

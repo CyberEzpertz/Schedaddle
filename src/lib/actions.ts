@@ -1,6 +1,6 @@
 "use server";
 
-import { classArraySchema, Course } from "./definitions";
+import { class2DArraySchema, classArraySchema, Course } from "./definitions";
 
 export async function fetchCourse(courseCode: string) {
   const id = process.env.ID_NUMBER;
@@ -26,4 +26,34 @@ export async function fetchCourse(courseCode: string) {
   };
 
   return newCourse;
+}
+
+export async function fetchMultipleCourses(courseCodes: string[]) {
+  const id = process.env.ID_NUMBER;
+
+  const res = await fetch(
+    `${process.env.COURSE_API}/api/courses?id=${id}&courses=${courseCodes.join(
+      "&courses="
+    )}`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Something went wrong while fetching.");
+  }
+
+  const parsed = await res.json();
+  const parsedData = class2DArraySchema.parse(parsed);
+
+  const updatedCourses = parsedData.map((classes) => {
+    return {
+      courseCode: classes[0].course,
+      classes: classes,
+      last_fetched: new Date(),
+    };
+  });
+
+  return updatedCourses;
 }

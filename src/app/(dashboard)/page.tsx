@@ -1,9 +1,9 @@
-import CourseCodes from "@/components/CourseCodes";
+import CoursePage from "@/components/CoursePage";
 
 type Props = {};
 
 const Home = (props: Props) => {
-  return <CourseCodes />;
+  return <CoursePage />;
 };
 
 export default Home;

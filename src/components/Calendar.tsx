@@ -3,6 +3,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Class, DaysEnum } from "@/lib/definitions";
 import { cn, convertTime, toProperCase } from "@/lib/utils";
 import { useCallback, useState } from "react";
+import { ScrollArea } from "./ui/scroll-area";
 
 const CELL_SIZE_PX = 56;
 const CELL_HEIGHT = "h-14";
@@ -96,7 +97,7 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
       </div>
 
       {/* Scrollable Container */}
-      <div className="flex h-full w-full overflow-y-scroll">
+      <ScrollArea>
         {/* Calendar Content */}
         <div className="flex h-max w-full flex-row">
           {/* Time Column */}
@@ -192,7 +193,7 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
             })}
           </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

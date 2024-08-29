@@ -25,7 +25,7 @@ export const classSchema = z.object({
   code: z.number(),
   course: z.string(),
   section: z.string(),
-  professor: z.nullable(z.string()),
+  professor: z.string(),
   schedules: z.array(scheduleSchema),
   enrolled: z.number(),
   enrollCap: z.number(),
@@ -36,6 +36,7 @@ export const classSchema = z.object({
 });
 
 export const classArraySchema = z.array(classSchema);
+export const class2DArraySchema = z.array(classArraySchema);
 
 export const courseSchema = z.object({
   courseCode: z.string(),

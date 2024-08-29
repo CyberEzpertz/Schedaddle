@@ -13,8 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { Course } from "@/lib/definitions";
+import { fetchMultipleCourses } from "@/lib/actions";
+import { toast } from "./ui/use-toast";
 
 const formSchema = z.object({
   courseCode: z.string().length(7, "Length should be 7!"),
@@ -22,9 +25,11 @@ const formSchema = z.object({
 
 type props = {
   fetchHandler: (courseCode: string) => Promise<void>;
+  courses: Course[];
+  setCourses: (courses: Course[]) => void;
 };
 
-const CourseInput = ({ fetchHandler }: props) => {
+const CourseInput = ({ fetchHandler, courses, setCourses }: props) => {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,6 +37,21 @@ const CourseInput = ({ fetchHandler }: props) => {
       courseCode: "",
     },
   });
+
+  const handleUpdate = async () => {
+    setIsFetching(true);
+    const newData = await fetchMultipleCourses(
+      courses.map((course) => course.courseCode)
+    );
+    setIsFetching(false);
+
+    localStorage.setItem("courses", JSON.stringify(newData));
+    setCourses(newData);
+    toast({
+      title: "Successfully updated all courses!",
+      description: "The courses should now display updated data.",
+    });
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsFetching(true);
@@ -57,9 +77,6 @@ const CourseInput = ({ fetchHandler }: props) => {
               <FormControl>
                 <Input placeholder="GE12345" {...field} />
               </FormControl>
-              <FormDescription>
-                Input a course code you want to add.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -69,6 +86,18 @@ const CourseInput = ({ fetchHandler }: props) => {
             <LoaderCircle className="animate-spin" />
           ) : (
             "Add Course"
+          )}
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => handleUpdate()}
+          disabled={isFetching}
+        >
+          {isFetching ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            "Update All Courses"
           )}
         </Button>
       </form>

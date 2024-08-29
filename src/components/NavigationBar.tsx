@@ -29,14 +29,14 @@ const NavigationBar = () => {
           href="/"
           className={pathName === "/" ? activeButton : normalButton}
         >
-          <TableProperties strokeWidth={2} />
+          <TableProperties strokeWidth={1.5} size={22} />
           Courses
         </Link>
         <Link
           href="/schedules"
           className={pathName === "/schedules" ? activeButton : normalButton}
         >
-          <CalendarRange />
+          <CalendarRange strokeWidth={1.5} size={22} />
           Schedules
         </Link>
       </div>

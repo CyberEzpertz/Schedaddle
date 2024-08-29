@@ -14,7 +14,7 @@ import {
 } from "@/lib/utils";
 import { toast } from "./ui/use-toast";
 
-const CourseCodes = () => {
+const CoursePage = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
 
@@ -30,6 +30,17 @@ const CourseCodes = () => {
     }
 
     const data = await fetchCourse(courseCode);
+
+    if (data.classes.length === 0) {
+      toast({
+        title: "Oops... That course doesn't have any classes.",
+        description:
+          "Either that course doesn't exist or no classes have been published yet.",
+        variant: "destructive",
+      });
+
+      return;
+    }
     const newCourses = [...courses, data];
 
     setCourses(newCourses);
@@ -55,12 +66,13 @@ const CourseCodes = () => {
 
   // Initialize the stored codes from local storage on component mount
   useEffect(() => {
-    const parsed = getLocalStorage("courses");
+    const data = getLocalStorage("courses");
 
-    if (parsed) {
-      setCourses(parsed);
-      if (parsed.length !== 0) {
-        setActiveCourse(parsed[0]);
+    if (data) {
+      setCourses(data);
+
+      if (data.length !== 0) {
+        setActiveCourse(data[0]);
       }
     }
   }, []);
@@ -70,7 +82,11 @@ const CourseCodes = () => {
       <div className="flex flex-col gap-4">
         <Card>
           <CardContent className="pt-6">
-            <CourseInput fetchHandler={handleFetch} />
+            <CourseInput
+              fetchHandler={handleFetch}
+              courses={courses}
+              setCourses={setCourses}
+            />
           </CardContent>
         </Card>
         <Card className="grow">
@@ -104,15 +120,13 @@ const CourseCodes = () => {
           </CardContent>
         </Card>
       </div>
-      {activeCourse && (
-        <DataTable
-          columns={columns}
-          data={activeCourse.classes}
-          activeCourse={activeCourse.courseCode}
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={activeCourse?.classes ?? []}
+        activeCourse={activeCourse?.courseCode ?? null}
+      />
     </div>
   );
 };
 
-export default CourseCodes;
+export default CoursePage;

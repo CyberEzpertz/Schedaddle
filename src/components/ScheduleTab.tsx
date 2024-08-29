@@ -82,7 +82,7 @@ const ScheduleTab = (props: Props) => {
   useEffect(() => {
     const storedSchedules = localStorage.getItem("schedules");
     const parsedSchedules =
-      storedSchedules !== null ? JSON.parse(storedSchedules) : null;
+      storedSchedules !== null ? JSON.parse(storedSchedules) : [];
 
     setSchedules(parsedSchedules);
   }, []);
@@ -93,15 +93,16 @@ const ScheduleTab = (props: Props) => {
         <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
         <Card className="h-full overflow-auto">
           <div className="p-4 flex flex-col gap-2">
-            {schedules.map((sched, i) => (
-              <Button
-                key={i}
-                variant={active === i ? "default" : "outline"}
-                onClick={() => setActive(i)}
-              >
-                Schedule {i}
-              </Button>
-            ))}
+            {schedules &&
+              schedules.map((sched, i) => (
+                <Button
+                  key={i}
+                  variant={active === i ? "default" : "outline"}
+                  onClick={() => setActive(i)}
+                >
+                  Schedule {i}
+                </Button>
+              ))}
           </div>
         </Card>
       </div>
