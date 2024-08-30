@@ -8,6 +8,15 @@ import { toast } from "./ui/use-toast";
 import { createSchedules } from "@/lib/utils";
 import { z } from "zod";
 import Calendar from "./Calendar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FixedSizeList } from "react-window";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {};
 
@@ -88,24 +97,47 @@ const ScheduleTab = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-row w-4/5 h-4/5 gap-4">
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col w-4/5 h-4/5 gap-4">
+      <Card className="flex flex-row gap-4 p-4">
+        <Button
+          onClick={() => setActive(active - 1)}
+          disabled={active <= 0}
+          variant="outline"
+          size="icon"
+        >
+          <ChevronLeft />
+        </Button>
+        <Select onValueChange={(val) => setActive(Number(val))}>
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder={`Schedule ${active}`}>
+              Schedule {active}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <FixedSizeList
+              width={`100%`}
+              height={350}
+              itemCount={schedules.length}
+              itemSize={35}
+            >
+              {({ index, style, isScrolling }) => (
+                <SelectItem key={index} value={`${index}`} style={{ ...style }}>
+                  Schedule {index}
+                </SelectItem>
+              )}
+            </FixedSizeList>
+          </SelectContent>
+        </Select>
+        <Button
+          onClick={() => setActive(active + 1)}
+          disabled={active >= schedules.length - 1}
+          variant="outline"
+          size="icon"
+        >
+          <ChevronRight />
+        </Button>
         <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
-        <Card className="h-full overflow-auto">
-          <div className="p-4 flex flex-col gap-2">
-            {schedules &&
-              schedules.map((sched, i) => (
-                <Button
-                  key={i}
-                  variant={active === i ? "default" : "outline"}
-                  onClick={() => setActive(i)}
-                >
-                  Schedule {i}
-                </Button>
-              ))}
-          </div>
-        </Card>
-      </div>
+      </Card>
       {schedules[active] && <Calendar courses={schedules[active]} />}
     </div>
   );

@@ -1,9 +1,9 @@
-import CoursePage from "@/components/CoursePage";
+import CourseTab from "@/components/CourseTab";
 
 type Props = {};
 
 const Home = (props: Props) => {
-  return <CoursePage />;
+  return <CourseTab />;
 };
 
 export default Home;

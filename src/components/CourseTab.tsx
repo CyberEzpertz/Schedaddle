@@ -17,7 +17,7 @@ import { Reorder, useDragControls } from "framer-motion";
 import { DragHandleDots1Icon } from "@radix-ui/react-icons";
 import { GripVertical } from "lucide-react";
 
-const CoursePage = () => {
+const CourseTab = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
   const controls = useDragControls();
@@ -153,4 +153,4 @@ const CoursePage = () => {
   );
 };
 
-export default CoursePage;
+export default CourseTab;
