@@ -40,17 +40,27 @@ const CourseInput = ({ fetchHandler, courses, setCourses }: props) => {
 
   const handleUpdate = async () => {
     setIsFetching(true);
-    const newData = await fetchMultipleCourses(
-      courses.map((course) => course.courseCode)
-    );
-    setIsFetching(false);
+    try {
+      const newData = await fetchMultipleCourses(
+        courses.map((course) => course.courseCode)
+      );
 
-    localStorage.setItem("courses", JSON.stringify(newData));
-    setCourses(newData);
-    toast({
-      title: "Successfully updated all courses!",
-      description: "The courses should now display updated data.",
-    });
+      localStorage.setItem("courses", JSON.stringify(newData));
+      setCourses(newData);
+      toast({
+        title: "Successfully updated all courses!",
+        description: "The courses should now display updated data.",
+      });
+    } catch (error) {
+      toast({
+        title: "Something went wrong while fetching...",
+        description:
+          "The server is facing some issues right now, try again in a bit.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

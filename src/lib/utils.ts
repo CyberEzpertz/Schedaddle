@@ -1,6 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Class, Course, Filter, ModalityEnum, Schedule } from "./definitions";
+import {
+  Class,
+  Course,
+  Filter,
+  ModalityEnumSchema,
+  Schedule,
+} from "./definitions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

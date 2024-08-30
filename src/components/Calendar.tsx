@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Class, DaysEnum } from "@/lib/definitions";
+import { Class, DaysEnumSchema } from "@/lib/definitions";
 import { cn, convertTime, toProperCase } from "@/lib/utils";
 import { useCallback, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";

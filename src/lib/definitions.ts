@@ -1,9 +1,10 @@
 import { tree } from "next/dist/build/templates/app-page";
 import { number, z } from "zod";
 
-export type DaysEnum = "M" | "T" | "W" | "H" | "F" | "S";
+export const DaysEnumSchema = z.enum(["M", "T", "W", "H", "F", "S"]);
+export type DaysEnum = z.infer<typeof DaysEnumSchema>;
 
-const ModalityEnum = z.enum([
+export const ModalityEnumSchema = z.enum([
   "HYBRID",
   "F2F",
   "ONLINE",
@@ -11,7 +12,7 @@ const ModalityEnum = z.enum([
   "TENTATIVE",
 ]);
 
-export type ModalityEnum = z.infer<typeof ModalityEnum>;
+export type ModalityEnum = z.infer<typeof ModalityEnumSchema>;
 
 export const scheduleSchema = z.object({
   day: z.enum(["M", "T", "W", "H", "F", "S", "U"]),
@@ -31,7 +32,7 @@ export const classSchema = z.object({
   enrollCap: z.number(),
   rooms: z.array(z.string()),
   restriction: z.string(),
-  modality: ModalityEnum,
+  modality: ModalityEnumSchema,
   remarks: z.string(),
 });
 
@@ -44,29 +45,31 @@ export const courseSchema = z.object({
   last_fetched: z.date(),
 });
 
+const filterOptionsSchema = z.object({
+  start: z.number(),
+  end: z.number(),
+  maxPerDay: z.number(),
+  maxConsecutive: z.number(),
+  modalities: z.array(ModalityEnumSchema),
+  daysInPerson: z.array(DaysEnumSchema),
+});
+
+const filterSchema = z.object({
+  general: filterOptionsSchema,
+  specific: z.object({
+    M: filterOptionsSchema.optional(),
+    T: filterOptionsSchema.optional(),
+    W: filterOptionsSchema.optional(),
+    H: filterOptionsSchema.optional(),
+    F: filterOptionsSchema.optional(),
+    S: filterOptionsSchema.optional(),
+    U: filterOptionsSchema.optional(),
+  }),
+});
+
 export const courseArraySchema = z.array(courseSchema);
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type Class = z.infer<typeof classSchema>;
 export type Course = z.infer<typeof courseSchema>;
-
-export interface FilterOptions {
-  start: number;
-  end: number;
-  maxPerDay: number;
-  maxConsecutive: number;
-  modalities: ModalityEnum[];
-  daysInPerson: DaysEnum[];
-}
-
-export interface Filter {
-  general: FilterOptions;
-  specific: {
-    M?: FilterOptions;
-    T?: FilterOptions;
-    W?: FilterOptions;
-    H?: FilterOptions;
-    F?: FilterOptions;
-    S?: FilterOptions;
-    U?: FilterOptions;
-  };
-}
+export type FilterOptions = z.infer<typeof filterOptionsSchema>;
+export type Filter = z.infer<typeof filterSchema>;
