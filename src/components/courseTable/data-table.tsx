@@ -164,7 +164,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </ScrollArea>
-      <div className="text-xs text-muted-foreground">
+      <div className="text-sm text-muted-foreground">
         {Object.keys(rowSelection).length} out of {data.length} rows selected.
       </div>
     </div>
