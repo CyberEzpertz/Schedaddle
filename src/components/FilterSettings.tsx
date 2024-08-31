@@ -22,20 +22,16 @@ const FilterSettings = () => {
         <Button variant="outline">Filter Settings</Button>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-[650px] h-4/5 p-4"
+        className="sm:max-w-[650px] max-h-[80vh] p-6 overflow-y-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
       >
-        <ScrollArea className="w-full">
-          <div className="p-2 ">
-            <DialogHeader className="mb-4">
-              <DialogTitle>Filter Settings</DialogTitle>
-              <DialogDescription>
-                Change how we should filter your schedules.
-              </DialogDescription>
-            </DialogHeader>
-            <FilterForm setOpen={setOpen} />
-          </div>
-        </ScrollArea>
+        <DialogHeader className="mb-4">
+          <DialogTitle>Filter Settings</DialogTitle>
+          <DialogDescription>
+            Change how we should filter your schedules.
+          </DialogDescription>
+        </DialogHeader>
+        <FilterForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );
