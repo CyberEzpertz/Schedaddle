@@ -31,9 +31,15 @@ export function filterInitialData(
   return courses.map((course) =>
     course.filter((courseClass) => {
       const isSchedInvalid = courseClass.schedules.some((sched) => {
+        // If it's an unknown day, then we just let it pass through.
         if (sched.day === "U") return false;
 
-        const { start, end, modalities } = filter.specific[sched.day];
+        // If the day is F2F and the user doesn't want F2F on that day, remove it.
+        if (!sched.isOnline && !filter.general.daysInPerson.includes(sched.day))
+          return true;
+
+        const { start, end, modalities, daysInPerson } =
+          filter.specific[sched.day];
 
         return (
           sched.start < start ||

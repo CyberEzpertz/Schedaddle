@@ -253,42 +253,43 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name={
-                    day
-                      ? `specific.${day}.daysInPerson`
-                      : "general.daysInPerson"
-                  }
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Days in-person</FormLabel>
-                      <FormControl>
-                        <ToggleGroup
-                          className="flex flex-row"
-                          type="multiple"
-                          value={field.value}
-                          onValueChange={(value) => field.onChange(value)}
-                          disabled={day && !filter.specific[day].enabled}
-                        >
-                          {DaysEnumSchema.options.map((day) => (
-                            <ToggleGroupItem
-                              key={day}
-                              value={day}
-                              className="border w-full"
-                            >
-                              {day}
-                            </ToggleGroupItem>
-                          ))}
-                        </ToggleGroup>
-                      </FormControl>
-                      <FormDescription>
-                        Which days are you available to take in-person?
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {!day && (
+                  <FormField
+                    control={form.control}
+                    name={
+                      day
+                        ? `specific.${day}.daysInPerson`
+                        : "general.daysInPerson"
+                    }
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Days in-person</FormLabel>
+                        <FormControl>
+                          <ToggleGroup
+                            className="flex flex-row"
+                            type="multiple"
+                            value={field.value}
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            {DaysEnumSchema.options.map((day) => (
+                              <ToggleGroupItem
+                                key={day}
+                                value={day}
+                                className="border w-full"
+                              >
+                                {day}
+                              </ToggleGroupItem>
+                            ))}
+                          </ToggleGroup>
+                        </FormControl>
+                        <FormDescription>
+                          Which days are you available to take in-person?
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </TabsContent>
           ))}
