@@ -10,12 +10,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FilterForm } from "./FilterForm";
+import FilterForm from "./FilterForm";
 import { ScrollArea } from "./ui/scroll-area";
 import { useState } from "react";
+import { Tabs, TabsList } from "./ui/tabs";
+import { TabsContent, TabsTrigger } from "@radix-ui/react-tabs";
+import { DaysEnumSchema } from "@/lib/definitions";
 
 const FilterSettings = () => {
   const [open, setOpen] = useState(false);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -27,7 +31,7 @@ const FilterSettings = () => {
       >
         <ScrollArea className="w-full overflow-visible">
           <div className="p-2">
-            <DialogHeader>
+            <DialogHeader className="mb-4">
               <DialogTitle>Filter Settings</DialogTitle>
               <DialogDescription>
                 Change how we should filter your schedules.

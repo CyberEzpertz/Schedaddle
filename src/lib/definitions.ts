@@ -45,25 +45,30 @@ export const courseSchema = z.object({
   last_fetched: z.date(),
 });
 
-const filterOptionsSchema = z.object({
-  start: z.number(),
-  end: z.number(),
-  maxPerDay: z.number(),
-  maxConsecutive: z.number(),
-  modalities: z.array(ModalityEnumSchema),
-  daysInPerson: z.array(DaysEnumSchema),
-});
+const filterOptionsSchema = z
+  .object({
+    enabled: z.boolean(),
+    start: z.coerce.number().min(0).max(2400),
+    end: z.coerce.number().min(0).max(2400),
+    maxPerDay: z.coerce.number().min(1).max(10),
+    maxConsecutive: z.coerce.number().min(1).max(10),
+    modalities: z.array(ModalityEnumSchema),
+    daysInPerson: z.array(DaysEnumSchema),
+  })
+  .refine((schema) => schema.start < schema.end, {
+    message: "Start can't be greater than or equal to end time.",
+    path: ["start"],
+  });
 
-const filterSchema = z.object({
+export const filterSchema = z.object({
   general: filterOptionsSchema,
   specific: z.object({
-    M: filterOptionsSchema.optional(),
-    T: filterOptionsSchema.optional(),
-    W: filterOptionsSchema.optional(),
-    H: filterOptionsSchema.optional(),
-    F: filterOptionsSchema.optional(),
-    S: filterOptionsSchema.optional(),
-    U: filterOptionsSchema.optional(),
+    M: filterOptionsSchema,
+    T: filterOptionsSchema,
+    W: filterOptionsSchema,
+    H: filterOptionsSchema,
+    F: filterOptionsSchema,
+    S: filterOptionsSchema,
   }),
 });
 

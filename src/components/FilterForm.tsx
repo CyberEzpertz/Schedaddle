@@ -14,63 +14,118 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DaysEnumSchema, ModalityEnumSchema } from "@/lib/definitions";
+import {
+  DaysEnum,
+  DaysEnumSchema,
+  Filter,
+  FilterOptions,
+  filterSchema,
+  ModalityEnumSchema,
+} from "@/lib/definitions";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { Toggle } from "./ui/toggle";
-const formSchema = z
-  .object({
-    start: z.coerce.number().min(0).max(2400),
-    end: z.coerce.number().min(0).max(2400),
-    maxPerDay: z.coerce.number().min(1).max(10),
-    maxConsecutive: z.coerce.number().min(1).max(10),
-    modalities: z.array(ModalityEnumSchema),
-    daysInPerson: z.array(DaysEnumSchema),
-  })
-  .refine((schema) => schema.start < schema.end, {
-    message: "Start can't be greater than or equal to end time.",
-    path: ["start"],
+import { useEffect, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Switch } from "./ui/switch";
+import { Card } from "./ui/card";
+
+const defaultGeneralSettings = {
+  enabled: true,
+  start: 0,
+  end: 2400,
+  maxPerDay: 10,
+  maxConsecutive: 10,
+  modalities: ["F2F", "HYBRID", "ONLINE", "PREDOMINANTLY ONLINE", "TENTATIVE"],
+  daysInPerson: [],
+};
+
+const defaultSpecificSettings = Object.fromEntries(
+  DaysEnumSchema.options.map((day) => [
+    day,
+    { ...defaultGeneralSettings, enabled: false },
+  ])
+);
+
+const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
+  const [filter, setFilter] = useState<Filter>(() => {
+    const localFilter = localStorage.getItem("filterOptions");
+    return localFilter
+      ? JSON.parse(localFilter)
+      : {
+          general: defaultGeneralSettings,
+          specific: defaultSpecificSettings,
+        };
   });
 
-export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      start: 0,
-      end: 2400,
-      maxPerDay: 10,
-      maxConsecutive: 10,
-      modalities: [
-        "F2F",
-        "HYBRID",
-        "ONLINE",
-        "PREDOMINANTLY ONLINE",
-        "TENTATIVE",
-      ],
-      daysInPerson: [],
-    },
+  const form = useForm<Filter>({
+    resolver: zodResolver(filterSchema),
+    defaultValues: filter,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: Filter) {
     console.log(values);
+
+    // Make all disabled days sync with general settings
+    Object.keys(values.specific).forEach((day) => {
+      if (!values.specific[day as DaysEnum].enabled) {
+        values.specific[day as DaysEnum] = {
+          ...values.general,
+          enabled: false,
+        };
+      }
+    });
+
+    localStorage.setItem("filterOptions", JSON.stringify(values));
     setOpen(false);
   }
 
-  return (
-    <Form {...form}>
-      <form
-        noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 w-full"
-      >
+  const FilterFields = ({ day }: { day?: DaysEnum }) => {
+    return (
+      <div className="flex flex-col gap-4">
+        {day && (
+          <FormField
+            control={form.control}
+            name={`specific.${day}.enabled`}
+            render={({ field }) => (
+              <FormItem className="w-auto">
+                <FormControl>
+                  <Card className="p-4 justify-between flex flex-row items-center">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold">Enable Filter</span>
+                      <span className="text-xs text-muted-foreground">
+                        Enabling this will override the general settings for
+                        this day specifically.
+                      </span>
+                    </div>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(val) => {
+                        const newFilter = { ...filter };
+                        field.onChange(val);
+                        newFilter.specific[day].enabled = val;
+                        setFilter(newFilter);
+                      }}
+                    />
+                  </Card>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <div className="grid grid-cols-2 gap-8 w-full">
           <FormField
             control={form.control}
-            name="start"
+            name={day ? `specific.${day}.start` : "general.start"}
             render={({ field }) => (
               <FormItem className="w-auto">
                 <FormLabel>Start Time</FormLabel>
                 <FormControl>
-                  <Input className="" placeholder="Placeholder" {...field} />
+                  <Input
+                    {...field}
+                    disabled={day && !filter.specific[day].enabled}
+                    placeholder="Placeholder"
+                  />
                 </FormControl>
                 <FormDescription className="">
                   The earliest possible time for a class.
@@ -81,12 +136,16 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           />
           <FormField
             control={form.control}
-            name="end"
+            name={day ? `specific.${day}.end` : "general.end"}
             render={({ field }) => (
               <FormItem className="w-auto">
                 <FormLabel>End Time</FormLabel>
                 <FormControl>
-                  <Input placeholder="Placeholder" {...field} />
+                  <Input
+                    {...field}
+                    disabled={day && !filter.specific[day].enabled}
+                    placeholder="Placeholder"
+                  />
                 </FormControl>
                 <FormDescription>
                   The latest possible time for a class.
@@ -100,12 +159,16 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         <div className="grid grid-cols-2 gap-8">
           <FormField
             control={form.control}
-            name="maxPerDay"
+            name={day ? `specific.${day}.maxPerDay` : "general.maxPerDay"}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{"Max Courses / Day"}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Placeholder" {...field} />
+                  <Input
+                    placeholder="Placeholder"
+                    {...field}
+                    disabled={day && !filter.specific[day].enabled}
+                  />
                 </FormControl>
                 <FormDescription>
                   How many courses are allowed per day? {"(Max of 10)"}
@@ -116,12 +179,18 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           />
           <FormField
             control={form.control}
-            name="maxConsecutive"
+            name={
+              day ? `specific.${day}.maxConsecutive` : "general.maxConsecutive"
+            }
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Max Consecutive Courses</FormLabel>
                 <FormControl>
-                  <Input placeholder="Placeholder" {...field} />
+                  <Input
+                    placeholder="Placeholder"
+                    {...field}
+                    disabled={day && !filter.specific[day].enabled}
+                  />
                 </FormControl>
                 <FormDescription>
                   How many courses do you want back-to-back?
@@ -134,7 +203,7 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
 
         <FormField
           control={form.control}
-          name="modalities"
+          name={day ? `specific.${day}.modalities` : "general.modalities"}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Modalities</FormLabel>
@@ -144,6 +213,7 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
                   type="multiple"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
+                  disabled={day && !filter.specific[day].enabled}
                 >
                   {ModalityEnumSchema.options.map((modality) => (
                     <ToggleGroupItem
@@ -166,7 +236,7 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
 
         <FormField
           control={form.control}
-          name="daysInPerson"
+          name={day ? `specific.${day}.daysInPerson` : "general.daysInPerson"}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Days in-person</FormLabel>
@@ -176,6 +246,7 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
                   type="multiple"
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
+                  disabled={day && !filter.specific[day].enabled}
                 >
                   {DaysEnumSchema.options.map((day) => (
                     <ToggleGroupItem
@@ -195,8 +266,45 @@ export function FilterForm({ setOpen }: { setOpen: (open: boolean) => void }) {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+      </div>
+    );
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        noValidate
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex flex-col gap-8"
+      >
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="w-full grid grid-flow-col auto-cols-fr mb-4">
+            <TabsTrigger value="general">General</TabsTrigger>
+            {DaysEnumSchema.options.map((day) => (
+              <TabsTrigger value={day} key={day}>
+                {day}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent value="general">
+            <FilterFields />
+          </TabsContent>
+          {DaysEnumSchema.options.map((day) => (
+            <TabsContent key={day} value={day}>
+              <FilterFields day={day} />
+            </TabsContent>
+          ))}
+        </Tabs>
+        <Button
+          type="submit"
+          className="ml-auto"
+          onClick={() => console.log(form.getValues())}
+        >
+          Save all
+        </Button>
       </form>
     </Form>
   );
-}
+};
+
+export default FilterForm;
