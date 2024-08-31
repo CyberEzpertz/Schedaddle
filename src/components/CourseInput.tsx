@@ -66,9 +66,18 @@ const CourseInput = ({ fetchHandler, courses, setCourses }: props) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsFetching(true);
 
-    await fetchHandler(values.courseCode.toUpperCase());
-
-    setIsFetching(false);
+    try {
+      await fetchHandler(values.courseCode.toUpperCase());
+    } catch (error) {
+      toast({
+        title: "Something went wrong while fetching...",
+        description:
+          "The server is facing some issues right now, try again in a bit.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   return (
