@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -13,9 +12,6 @@ import {
 import FilterForm from "./FilterForm";
 import { ScrollArea } from "./ui/scroll-area";
 import { useState } from "react";
-import { Tabs, TabsList } from "./ui/tabs";
-import { TabsContent, TabsTrigger } from "@radix-ui/react-tabs";
-import { DaysEnumSchema } from "@/lib/definitions";
 
 const FilterSettings = () => {
   const [open, setOpen] = useState(false);
@@ -26,11 +22,11 @@ const FilterSettings = () => {
         <Button variant="outline">Filter Settings</Button>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-[650px] max-h-[80%] h-max p-4"
+        className="sm:max-w-[650px] h-4/5 p-4"
         onPointerDownOutside={(e) => e.preventDefault()}
       >
-        <ScrollArea className="w-full overflow-visible">
-          <div className="p-2">
+        <ScrollArea className="w-full">
+          <div className="p-2 ">
             <DialogHeader className="mb-4">
               <DialogTitle>Filter Settings</DialogTitle>
               <DialogDescription>

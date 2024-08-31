@@ -48,7 +48,7 @@ const defaultSpecificSettings = Object.fromEntries(
 
 const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const [filter, setFilter] = useState<Filter>(() => {
-    const localFilter = localStorage.getItem("filterOptions");
+    const localFilter = localStorage.getItem("filter_options");
     return localFilter
       ? JSON.parse(localFilter)
       : {
@@ -75,13 +75,16 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       }
     });
 
-    localStorage.setItem("filterOptions", JSON.stringify(values));
+    localStorage.setItem("filter_options", JSON.stringify(values));
     setOpen(false);
   }
 
   const FilterFields = ({ day }: { day?: DaysEnum }) => {
+    useEffect(() => console.log("RENDER"));
+    useEffect(() => console.log(day), [day]);
+
     return (
-      <div className="flex flex-col gap-4">
+      <>
         {day && (
           <FormField
             control={form.control}
@@ -124,7 +127,6 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   <Input
                     {...field}
                     disabled={day && !filter.specific[day].enabled}
-                    placeholder="Placeholder"
                   />
                 </FormControl>
                 <FormDescription className="">
@@ -266,7 +268,7 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
             </FormItem>
           )}
         />
-      </div>
+      </>
     );
   };
 
@@ -286,20 +288,205 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               </TabsTrigger>
             ))}
           </TabsList>
-          <TabsContent value="general">
-            <FilterFields />
-          </TabsContent>
-          {DaysEnumSchema.options.map((day) => (
-            <TabsContent key={day} value={day}>
-              <FilterFields day={day} />
+          {[undefined, ...DaysEnumSchema.options].map((day) => (
+            <TabsContent key={day ?? "general"} value={day ?? "general"}>
+              <div className="flex flex-col gap-4">
+                {day && (
+                  <FormField
+                    control={form.control}
+                    name={`specific.${day}.enabled`}
+                    render={({ field }) => (
+                      <FormItem className="w-auto">
+                        <FormControl>
+                          <Card className="p-4 justify-between flex flex-row items-center">
+                            <div className="flex flex-col gap-1">
+                              <span className="font-bold">Enable Filter</span>
+                              <span className="text-xs text-muted-foreground">
+                                Enabling this will override the general settings
+                                for this day specifically.
+                              </span>
+                            </div>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(val) => {
+                                const newFilter = { ...filter };
+                                field.onChange(val);
+                                newFilter.specific[day].enabled = val;
+                                setFilter(newFilter);
+                              }}
+                            />
+                          </Card>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                <div className="grid grid-cols-2 gap-8 w-full">
+                  <FormField
+                    control={form.control}
+                    name={day ? `specific.${day}.start` : "general.start"}
+                    render={({ field }) => (
+                      <FormItem className="w-auto">
+                        <FormLabel>Start Time</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={day && !filter.specific[day].enabled}
+                          />
+                        </FormControl>
+                        <FormDescription className="">
+                          The earliest possible time for a class.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={day ? `specific.${day}.end` : "general.end"}
+                    render={({ field }) => (
+                      <FormItem className="w-auto">
+                        <FormLabel>End Time</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={day && !filter.specific[day].enabled}
+                            placeholder="Placeholder"
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The latest possible time for a class.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name={
+                      day ? `specific.${day}.maxPerDay` : "general.maxPerDay"
+                    }
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{"Max Courses / Day"}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Placeholder"
+                            {...field}
+                            disabled={day && !filter.specific[day].enabled}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          How many courses are allowed per day? {"(Max of 10)"}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={
+                      day
+                        ? `specific.${day}.maxConsecutive`
+                        : "general.maxConsecutive"
+                    }
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Max Consecutive Courses</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Placeholder"
+                            {...field}
+                            disabled={day && !filter.specific[day].enabled}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          How many courses do you want back-to-back?
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name={
+                    day ? `specific.${day}.modalities` : "general.modalities"
+                  }
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Modalities</FormLabel>
+                      <FormControl>
+                        <ToggleGroup
+                          className="flex flex-row justify-items-stretch"
+                          type="multiple"
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                          disabled={day && !filter.specific[day].enabled}
+                        >
+                          {ModalityEnumSchema.options.map((modality) => (
+                            <ToggleGroupItem
+                              key={modality}
+                              value={modality}
+                              className="border w-full text-nowrap"
+                            >
+                              {modality}
+                            </ToggleGroupItem>
+                          ))}
+                        </ToggleGroup>
+                      </FormControl>
+                      <FormDescription>
+                        Select the modalities that you want to see in your
+                        schedules.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={
+                    day
+                      ? `specific.${day}.daysInPerson`
+                      : "general.daysInPerson"
+                  }
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Days in-person</FormLabel>
+                      <FormControl>
+                        <ToggleGroup
+                          className="flex flex-row"
+                          type="multiple"
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                          disabled={day && !filter.specific[day].enabled}
+                        >
+                          {DaysEnumSchema.options.map((day) => (
+                            <ToggleGroupItem
+                              key={day}
+                              value={day}
+                              className="border w-full"
+                            >
+                              {day}
+                            </ToggleGroupItem>
+                          ))}
+                        </ToggleGroup>
+                      </FormControl>
+                      <FormDescription>
+                        Which days are you available to take in-person?
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </TabsContent>
           ))}
         </Tabs>
-        <Button
-          type="submit"
-          className="ml-auto"
-          onClick={() => console.log(form.getValues())}
-        >
+        <Button type="submit" className="ml-auto">
           Save all
         </Button>
       </form>

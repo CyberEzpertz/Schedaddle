@@ -5,7 +5,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Class, classSchema, Filter } from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
-import { createSchedules } from "@/lib/utils";
+import { createSchedules, getLocalStorage } from "@/lib/utils";
 import { z } from "zod";
 import Calendar from "./Calendar";
 import {
@@ -26,11 +26,10 @@ const ScheduleTab = (props: Props) => {
   const [active, setActive] = useState<number>(0);
 
   const handleGenerate = () => {
-    const storedSelected = localStorage.getItem("selected_data");
-    const parsedSelected =
-      storedSelected !== null ? JSON.parse(storedSelected) : null;
+    const localSelected = getLocalStorage("selected_data");
+    const localFilter = getLocalStorage("filter_options");
 
-    if (!parsedSelected || parsedSelected.lengthh) {
+    if (!localSelected || localSelected.length) {
       toast({
         title: "Uh oh! Generation of schedules failed...",
         description: "No schedules could be made with your selection...",
@@ -38,29 +37,16 @@ const ScheduleTab = (props: Props) => {
       });
       return;
     }
+
     const safeSelected = z
       .record(z.string(), z.array(classSchema))
-      .parse(parsedSelected);
+      .parse(localSelected);
 
-    const sampleFilter: Filter = {
-      general: {
-        start: 915,
-        end: 1600,
-        daysInPerson: ["H"],
-        modalities: [
-          "F2F",
-          "HYBRID",
-          "ONLINE",
-          "PREDOMINANTLY ONLINE",
-          "TENTATIVE",
-        ],
-        maxConsecutive: 3,
-        maxPerDay: 3,
-      },
-      specific: {},
-    };
     const selectedData = Object.entries(safeSelected).map(([_, val]) => val);
-    const newSchedules = createSchedules(selectedData, sampleFilter);
+    const newSchedules = createSchedules(
+      selectedData,
+      localFilter ?? undefined
+    );
 
     if (newSchedules.length === 0) {
       toast({

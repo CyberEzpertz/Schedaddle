@@ -79,18 +79,19 @@ export function filterInitialData(
   return courses.map((course) =>
     course.filter((courseClass) => {
       const isSchedInvalid = courseClass.schedules.some((sched) => {
-        const { start, end } = filter.specific[sched.day] ?? filter.general;
+        if (sched.day === "U") return false;
 
-        return sched.start < start || sched.end > end;
+        const { start, end, modalities } = filter.specific[sched.day];
+
+        return (
+          sched.start < start ||
+          sched.end > end ||
+          !modalities.includes(courseClass.modality)
+        );
       });
 
-      // Check if the course modality is valid
-      const isModalityValid = filter.general.modalities.includes(
-        courseClass.modality
-      );
-
       // Keep the class if it passes both the schedule and modality filters
-      return !isSchedInvalid && isModalityValid;
+      return !isSchedInvalid;
     })
   );
 }
