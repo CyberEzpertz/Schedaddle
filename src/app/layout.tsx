@@ -18,10 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       <body
         className={cn(
-          "h-screen bg-background font-sans antialiased flex flex-col",
+          "max-h-screen h-screen bg-background font-sans antialiased flex flex-col",
           inter.variable
         )}
       >

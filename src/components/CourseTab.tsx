@@ -87,7 +87,7 @@ const CourseTab = () => {
   }, []);
 
   return (
-    <div className="flex gap-4 flex-row h-4/5 px-32 w-full">
+    <div className="flex gap-4 flex-row flex-grow py-16 px-32 w-full self-stretch min-h-0">
       <div className="flex flex-col gap-4">
         <Card>
           <CardContent className="pt-6">

@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Class, DaysEnumSchema } from "@/lib/definitions";
+import { Class, DaysEnum, DaysEnumSchema } from "@/lib/definitions";
 import { cn, convertTime, toProperCase } from "@/lib/utils";
 import { useCallback, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
@@ -82,7 +82,7 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
     "relative h-full w-full text-center py-2 px-2 mx-2 font-bold dark:text-gray-400";
 
   return (
-    <div className="flex h-full w-full flex-col border rounded-lg">
+    <div className="flex flex-shrink min-h-0 w-full flex-col border rounded-lg">
       {/* Day Indicator Row */}
       <div className="flex w-full flex-row border-b dark:border-gray-800 py-1">
         <div className="w-[50px] shrink-0" />
