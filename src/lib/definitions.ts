@@ -42,7 +42,7 @@ export const class2DArraySchema = z.array(classArraySchema);
 export const courseSchema = z.object({
   courseCode: z.string(),
   classes: classArraySchema,
-  last_fetched: z.date(),
+  lastFetched: z.date(),
 });
 
 const filterOptionsSchema = z

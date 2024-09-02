@@ -159,6 +159,7 @@ const CourseTab = () => {
       <DataTable
         columns={columns}
         data={activeCourse?.classes ?? []}
+        lastFetched={activeCourse?.lastFetched}
         activeCourse={activeCourse?.courseCode ?? null}
       />
     </div>

@@ -20,7 +20,7 @@ export async function fetchCourse(courseCode: string, id: string) {
   const newCourse: Course = {
     courseCode: courseCode,
     classes: parsedData,
-    last_fetched: new Date(),
+    lastFetched: new Date(),
   };
 
   return newCourse;
@@ -49,7 +49,7 @@ export async function fetchMultipleCourses(courseCodes: string[]) {
     return {
       courseCode: classes[0].course,
       classes: classes,
-      last_fetched: new Date(),
+      lastFetched: new Date(),
     };
   });
 

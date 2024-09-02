@@ -31,6 +31,7 @@ import { FilterBar } from "./FilterBar";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  lastFetched?: Date;
   activeCourse: string | null;
 }
 
@@ -39,6 +40,7 @@ let initialMount = false;
 export function DataTable<TData, TValue>({
   columns,
   data,
+  lastFetched,
   activeCourse,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -166,6 +168,7 @@ export function DataTable<TData, TValue>({
       </ScrollArea>
       <div className="text-sm text-muted-foreground">
         {Object.keys(rowSelection).length} out of {data.length} rows selected.
+        Last updated: {lastFetched?.toLocaleString()}
       </div>
     </div>
   );
