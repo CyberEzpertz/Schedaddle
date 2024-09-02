@@ -79,12 +79,12 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
   );
 
   const headerStyle =
-    "relative h-full w-full text-center py-2 px-2 mx-2 font-bold dark:text-gray-400";
+    "relative h-full w-full text-center py-2 px-2 mx-2 font-bold text-muted-foreground";
 
   return (
     <div className="flex flex-shrink min-h-0 w-full flex-col border rounded-lg">
       {/* Day Indicator Row */}
-      <div className="flex w-full flex-row border-b dark:border-gray-800 py-1">
+      <div className="flex w-full flex-row border-b dark:border-muted py-1">
         <div className="w-[50px] shrink-0" />
         <div className="w-2 shrink-0" />
 
@@ -121,7 +121,7 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
                   className={cn(
                     `${
                       index === 15 ? "h-0" : CELL_HEIGHT
-                    } after:absolute after:-z-10 after:h-[1px] after:w-full after:bg-gray-300 dark:after:bg-gray-800 after:content-['']`
+                    } after:absolute after:-z-10 after:h-[1px] after:w-full after:bg-muted/50 after:content-['']`
                   )}
                   key={index}
                 />
@@ -132,9 +132,8 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
             {(Object.keys(sortedClasses) as Array<DaysEnum>).map((day) => {
               return (
                 <div
-                  className={`relative flex h-full w-full flex-col border-l border-gray-300 dark:border-gray-800 pr-2 ${
-                    ["M", "W", "F"].includes(day) &&
-                    "bg-gray-400/20 dark:bg-gray-900/30"
+                  className={`relative flex h-full w-full flex-col border-l border-muted/50 pr-2 ${
+                    ["M", "W", "F"].includes(day) && "bg-muted/10"
                   }`}
                   key={day}
                 >

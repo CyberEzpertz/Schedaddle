@@ -129,7 +129,7 @@ const CourseTab = () => {
                 >
                   <GripVertical
                     onPointerDown={(e) => controls.start(e)}
-                    className="shrink-0 text-gray-700 cursor-grab"
+                    className="shrink-0 text-muted-foreground cursor-grab"
                   />
                   <Button
                     variant={

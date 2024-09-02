@@ -88,7 +88,7 @@ export const columns: ColumnDef<Class>[] = [
             <Badge
               key={i}
               variant="outline"
-              className={`dark:bg-gray-950 dark:text-gray-50 select-none flex gap-2 rounded-lg p-2 px-4 font-medium w-[160px]  justify-center items-center`}
+              className={`dark:bg-background/50 select-none flex gap-2 rounded-lg p-2 px-4 font-medium w-[160px]  justify-center items-center`}
             >
               {/* {sched.isOnline ? <Wifi size={16} /> : <MapPin size={16} />} */}
               {`${convertTime(sched.start)} - ${convertTime(sched.end)}`}
@@ -139,6 +139,7 @@ export const columns: ColumnDef<Class>[] = [
   {
     id: "restriction",
     accessorKey: "restriction",
+    filterFn: "arrIncludesSome",
   },
 
   {
@@ -157,5 +158,6 @@ export const columns: ColumnDef<Class>[] = [
 
       return isClosed ? "Closed" : "Open";
     },
+    filterFn: "arrIncludesSome",
   },
 ];

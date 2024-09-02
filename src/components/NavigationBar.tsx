@@ -16,7 +16,7 @@ const NavigationBar = () => {
   });
 
   const activeButton = buttonVariants({
-    variant: "secondary",
+    variant: "default",
     className: "flex gap-2 items-center",
   });
 

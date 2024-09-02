@@ -84,55 +84,58 @@ const ScheduleTab = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full min-h-0 py-16 px-32 flex-grow gap-4">
-      <Card className="flex flex-row gap-4 p-4">
-        <div className="flex flex-row gap-2">
-          <Button
-            onClick={() => setActive(active - 1)}
-            disabled={active <= 0}
-            variant="outline"
-            size="icon"
-          >
-            <ChevronLeft />
-          </Button>
-          <Select onValueChange={(val) => setActive(Number(val))}>
-            <SelectTrigger className="w-64">
-              <SelectValue placeholder={`Schedule ${active}`}>
-                Schedule {active}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <FixedSizeList
-                width={`100%`}
-                height={350}
-                itemCount={schedules.length}
-                itemSize={35}
-              >
-                {({ index, style, isScrolling }) => (
-                  <SelectItem
-                    key={index}
-                    value={`${index}`}
-                    style={{ ...style }}
-                  >
-                    Schedule {index}
-                  </SelectItem>
-                )}
-              </FixedSizeList>
-            </SelectContent>
-          </Select>
-          <Button
-            onClick={() => setActive(active + 1)}
-            disabled={active >= schedules.length - 1}
-            variant="outline"
-            size="icon"
-          >
-            <ChevronRight />
-          </Button>
-        </div>
-        <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
-        <FilterSettings />
-      </Card>
-      {schedules[active] && <Calendar courses={schedules[active]} />}
+    <div className="flex flex-row w-full min-h-0 py-16 px-32 gap-4">
+      <div className="flex flex-col gap-4 grow">
+        <Card className="flex flex-row gap-4 p-4">
+          <div className="flex flex-row gap-2">
+            <Button
+              onClick={() => setActive(active - 1)}
+              disabled={active <= 0}
+              variant="outline"
+              size="icon"
+            >
+              <ChevronLeft />
+            </Button>
+            <Select onValueChange={(val) => setActive(Number(val))}>
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder={`Schedule ${active}`}>
+                  Schedule {active}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <FixedSizeList
+                  width={`100%`}
+                  height={350}
+                  itemCount={schedules.length}
+                  itemSize={35}
+                >
+                  {({ index, style, isScrolling }) => (
+                    <SelectItem
+                      key={index}
+                      value={`${index}`}
+                      style={{ ...style }}
+                    >
+                      Schedule {index}
+                    </SelectItem>
+                  )}
+                </FixedSizeList>
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => setActive(active + 1)}
+              disabled={active >= schedules.length - 1}
+              variant="outline"
+              size="icon"
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+          <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
+          <FilterSettings />
+        </Card>
+        {schedules[active] && <Calendar courses={schedules[active]} />}
+      </div>
+      <Card className="w-64"></Card>
     </div>
   );
 };
