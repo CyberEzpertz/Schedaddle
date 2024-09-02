@@ -5,6 +5,7 @@ import { buttonVariants } from "./ui/button";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ModeToggle";
 import { CalendarRange, TableProperties } from "lucide-react";
+import IDInput from "./IDInput";
 
 const NavigationBar = () => {
   const pathName = usePathname();
@@ -40,7 +41,10 @@ const NavigationBar = () => {
           Schedules
         </Link>
       </div>
-      <ModeToggle />
+      <div className="flex flex-row gap-2">
+        <IDInput />
+        <ModeToggle />
+      </div>
     </div>
   );
 };

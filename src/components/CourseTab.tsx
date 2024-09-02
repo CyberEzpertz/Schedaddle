@@ -23,6 +23,8 @@ const CourseTab = () => {
   const controls = useDragControls();
 
   const handleFetch = async (courseCode: string) => {
+    const id = getLocalStorage("id_number");
+
     if (courses.some((course) => course.courseCode === courseCode)) {
       toast({
         title: "That's not possible...",
@@ -33,7 +35,17 @@ const CourseTab = () => {
       return;
     }
 
-    const data = await fetchCourse(courseCode);
+    if (!id) {
+      toast({
+        title: "You haven't set your ID yet!",
+        description: "Set your ID on the button at the top right corner.",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    const data = await fetchCourse(courseCode, id);
 
     if (data.classes.length === 0) {
       toast({

@@ -2,9 +2,7 @@
 
 import { class2DArraySchema, classArraySchema, Course } from "./definitions";
 
-export async function fetchCourse(courseCode: string) {
-  const id = process.env.ID_NUMBER;
-
+export async function fetchCourse(courseCode: string, id: string) {
   const res = await fetch(
     `${process.env.COURSE_API}/api/courses?id=${id}&courses=${courseCode}`,
     {
