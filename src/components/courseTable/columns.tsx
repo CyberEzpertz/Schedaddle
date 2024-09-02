@@ -17,7 +17,7 @@ export const columns: ColumnDef<Class>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        className="flex h-4 w-4"
+        className="flex h-4 w-4 border-secondary"
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -25,7 +25,7 @@ export const columns: ColumnDef<Class>[] = [
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        className="flex h-4 w-4"
+        className="flex h-4 w-4 border-secondary"
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
