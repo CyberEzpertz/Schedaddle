@@ -24,25 +24,25 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
 
   const [hovered, setHovered] = useState<number | false>(false);
   const cardColors = [
-    "bg-rose-300 dark:bg-rose-950",
-    "bg-amber-300 dark:bg-amber-950",
-    "bg-green-300 dark:bg-green-950",
-    "bg-purple-300 dark:bg-purple-950",
-    "bg-indigo-300 dark:bg-indigo-950",
-    "bg-blue-300 dark:bg-blue-950",
-    "bg-sky-300 dark:bg-sky-950",
-    "bg-teal-300 dark:bg-teal-950",
+    "bg-rose-200 dark:bg-rose-950",
+    "bg-amber-200 dark:bg-amber-950",
+    "bg-green-200 dark:bg-green-950",
+    "bg-purple-200 dark:bg-purple-950",
+    "bg-indigo-200 dark:bg-indigo-950",
+    "bg-blue-200 dark:bg-blue-950",
+    "bg-sky-200 dark:bg-sky-950",
+    "bg-teal-200 dark:bg-teal-950",
   ];
 
   const cardShadows = [
-    "bg-rose-400 shadow-rose-400/50 dark:bg-rose-800 dark:shadow-rose-700/50",
-    "bg-amber-400 shadow-amber-400/50 dark:bg-amber-800 dark:shadow-amber-700/50",
-    "bg-green-400 shadow-green-400/50 dark:bg-green-800 dark:shadow-green-700/50",
-    "bg-purple-400 shadow-purple-400/50 dark:bg-purple-800 dark:shadow-purple-700/50",
-    "bg-indigo-400 shadow-indigo-400/50 dark:bg-indigo-800 dark:shadow-indigo-700/50",
-    "bg-blue-400 shadow-blue-400/50 dark:bg-blue-800 dark:shadow-blue-700/50",
-    "bg-sky-400 shadow-sky-400/50 dark:bg-sky-800 dark:shadow-sky-700/50",
-    "bg-teal-400 shadow-teal-400/50 dark:bg-teal-800 dark:shadow-teal-700/50",
+    "bg-rose-300 shadow-rose-300/50 dark:bg-rose-800 dark:shadow-rose-700/50",
+    "bg-amber-300 shadow-amber-300/50 dark:bg-amber-800 dark:shadow-amber-700/50",
+    "bg-green-300 shadow-green-300/50 dark:bg-green-800 dark:shadow-green-700/50",
+    "bg-purple-300 shadow-purple-300/50 dark:bg-purple-800 dark:shadow-purple-700/50",
+    "bg-indigo-300 shadow-indigo-300/50 dark:bg-indigo-800 dark:shadow-indigo-700/50",
+    "bg-blue-300 shadow-blue-300/50 dark:bg-blue-800 dark:shadow-blue-700/50",
+    "bg-sky-300 shadow-sky-300/50 dark:bg-sky-800 dark:shadow-sky-700/50",
+    "bg-teal-300 shadow-teal-300/50 dark:bg-teal-800 dark:shadow-teal-700/50",
   ];
 
   const getRandomColor = () => {
