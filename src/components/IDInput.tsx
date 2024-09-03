@@ -40,7 +40,7 @@ const IDInput = () => {
   const [id, setId] = useState<string>("");
 
   useEffect(() => {
-    const newId = JSON.parse(localStorage.getItem("id_number") ?? "");
+    const newId = JSON.parse(localStorage.getItem("id_number") ?? "{}");
     setId(newId);
   }, []);
 
