@@ -22,6 +22,7 @@ Schedaddle is currently not set up for public use or self-hosting, as it require
 - **TypeScript**: Strongly typed programming language that builds on JavaScript.
 - **TanStack Table**: A powerful table component for displaying data.
 - **Zod**: TypeScript-first schema declaration and validation library.
+- **shadcn/ui** - Collection of re-usable components.
 
 ## License
 
