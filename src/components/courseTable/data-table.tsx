@@ -167,8 +167,11 @@ export function DataTable<TData, TValue>({
         </Table>
       </ScrollArea>
       <div className="text-sm text-muted-foreground">
-        {Object.keys(rowSelection).length} out of {data.length} rows selected.
-        Last updated: {lastFetched?.toLocaleString()}
+        {`${Object.keys(rowSelection).length} out of ${
+          data.length
+        } rows selected. Last Fetched: ${
+          lastFetched && new Date(lastFetched).toLocaleString()
+        }`}
       </div>
     </div>
   );
