@@ -1,14 +1,20 @@
 "use client";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Class, DaysEnum, DaysEnumSchema } from "@/lib/definitions";
-import { cn, convertTime, toProperCase } from "@/lib/utils";
+import { Class, ColorsEnum, DaysEnum, DaysEnumSchema } from "@/lib/definitions";
+import { cn, convertTime, getCardColors, toProperCase } from "@/lib/utils";
 import { useCallback, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
 
 const CELL_SIZE_PX = 56;
 const CELL_HEIGHT = "h-14";
 
-const Calendar = ({ courses }: { courses: Class[] }) => {
+const Calendar = ({
+  courses,
+  colors,
+}: {
+  courses: Class[];
+  colors: Record<string, ColorsEnum>;
+}) => {
   const calculateHeight = useCallback((start: number, end: number) => {
     const startHour = Math.floor(start / 100);
     const endHour = Math.floor(end / 100);
@@ -23,51 +29,17 @@ const Calendar = ({ courses }: { courses: Class[] }) => {
   }, []);
 
   const [hovered, setHovered] = useState<number | false>(false);
-  const cardColors = [
-    "bg-rose-200 dark:bg-rose-950",
-    "bg-amber-200 dark:bg-amber-950",
-    "bg-green-200 dark:bg-green-950",
-    "bg-purple-200 dark:bg-purple-950",
-    "bg-indigo-200 dark:bg-indigo-950",
-    "bg-blue-200 dark:bg-blue-950",
-    "bg-sky-200 dark:bg-sky-950",
-    "bg-teal-200 dark:bg-teal-950",
-  ];
-
-  const cardShadows = [
-    "bg-rose-300 shadow-rose-300/50 dark:bg-rose-800 dark:shadow-rose-700/50",
-    "bg-amber-300 shadow-amber-300/50 dark:bg-amber-800 dark:shadow-amber-700/50",
-    "bg-green-300 shadow-green-300/50 dark:bg-green-800 dark:shadow-green-700/50",
-    "bg-purple-300 shadow-purple-300/50 dark:bg-purple-800 dark:shadow-purple-700/50",
-    "bg-indigo-300 shadow-indigo-300/50 dark:bg-indigo-800 dark:shadow-indigo-700/50",
-    "bg-blue-300 shadow-blue-300/50 dark:bg-blue-800 dark:shadow-blue-700/50",
-    "bg-sky-300 shadow-sky-300/50 dark:bg-sky-800 dark:shadow-sky-700/50",
-    "bg-teal-300 shadow-teal-300/50 dark:bg-teal-800 dark:shadow-teal-700/50",
-  ];
-
-  const getRandomColor = () => {
-    return {
-      color: cardColors.pop() as string,
-      shadow: cardShadows.pop() as string,
-    };
-  };
-
-  const courseColors: Record<string, Record<"shadow" | "color", string>> = {};
 
   const sortedClasses = courses.reduce<
     Record<DaysEnum, (Class & { color: string; shadow: string })[]>
   >(
     (acc, course) => {
       for (const sched of course.schedules) {
-        if (!courseColors[course.code]) {
-          const { color, shadow } = getRandomColor();
-          courseColors[course.code] = { color, shadow };
-        }
-
         if (sched.day !== "U") {
+          const cardColors = getCardColors(colors[course.course]);
+
           acc[sched.day].push({
-            color: courseColors[course.code].color,
-            shadow: courseColors[course.code].shadow,
+            ...cardColors,
             ...course,
           });
         }

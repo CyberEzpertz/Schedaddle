@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Class, classSchema, Filter } from "@/lib/definitions";
+import { Class, classSchema, ColorsEnum, Filter } from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
 import { createSchedules, getLocalStorage } from "@/lib/utils";
 import { z } from "zod";
@@ -23,6 +23,7 @@ type Props = {};
 
 const ScheduleTab = (props: Props) => {
   const [schedules, setSchedules] = useState<Class[][]>([]);
+  const [colors, setColors] = useState<Record<string, ColorsEnum>>({});
   const [active, setActive] = useState<number>(0);
 
   const handleGenerate = () => {
@@ -43,7 +44,7 @@ const ScheduleTab = (props: Props) => {
       .parse(localSelected);
 
     const selectedData = Object.entries(safeSelected).map(([_, val]) => val);
-    const newSchedules = createSchedules(
+    const [newSchedules, newColors] = createSchedules(
       selectedData,
       localFilter ?? undefined
     );
@@ -68,19 +69,21 @@ const ScheduleTab = (props: Props) => {
 
     // If no error occurs, just set schedules as normal.
     setSchedules(newSchedules);
+    setColors(newColors);
     toast({
       title: "Sucessfully generated schedules!",
       description: `A total of ${newSchedules.length} were successfully generated.`,
     });
     localStorage.setItem("schedules", JSON.stringify(newSchedules));
+    localStorage.setItem("course_colors", JSON.stringify(newColors));
   };
 
   useEffect(() => {
-    const storedSchedules = localStorage.getItem("schedules");
-    const parsedSchedules =
-      storedSchedules !== null ? JSON.parse(storedSchedules) : [];
+    const storedSchedules = getLocalStorage("schedules") ?? [];
+    const storedColors = getLocalStorage("course_colors") ?? {};
 
-    setSchedules(parsedSchedules);
+    setSchedules(storedSchedules);
+    setColors(storedColors);
   }, []);
 
   return (
@@ -133,7 +136,9 @@ const ScheduleTab = (props: Props) => {
           <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
           <FilterSettings />
         </Card>
-        {schedules[active] && <Calendar courses={schedules[active]} />}
+        {schedules[active] && (
+          <Calendar courses={schedules[active]} colors={colors} />
+        )}
       </div>
       <Card className="w-64"></Card>
     </div>
