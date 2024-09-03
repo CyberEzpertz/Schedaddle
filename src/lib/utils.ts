@@ -246,6 +246,26 @@ export function getCardColors(color: ColorsEnum) {
     RED: "bg-red-200 dark:bg-red-900 text-red-950 dark:text-red-100",
   };
 
+  const cardBorders = {
+    ROSE: "border-rose-300 dark:border-rose-700",
+    PINK: "border-pink-300 dark:border-pink-700",
+    FUCHSIA: "border-fuchsia-300 dark:border-fuchsia-700",
+    PURPLE: "border-purple-300 dark:border-purple-700",
+    VIOLET: "border-violet-300 dark:border-violet-700",
+    INDIGO: "border-indigo-300 dark:border-indigo-700",
+    BLUE: "border-blue-300 dark:border-blue-700",
+    SKY: "border-sky-300 dark:border-sky-700",
+    CYAN: "border-cyan-300 dark:border-cyan-700",
+    TEAL: "border-teal-300 dark:border-teal-700",
+    EMERALD: "border-emerald-300 dark:border-emerald-700",
+    GREEN: "border-green-300 dark:border-green-700",
+    LIME: "border-lime-300 dark:border-lime-700",
+    YELLOW: "border-yellow-300 dark:border-yellow-700",
+    AMBER: "border-amber-300 dark:border-amber-700",
+    ORANGE: "border-orange-300 dark:border-orange-700",
+    RED: "border-red-300 dark:border-red-700",
+  };
+
   const cardShadows = {
     ROSE: "bg-rose-300 shadow-rose-300/50 dark:bg-rose-800 dark:shadow-rose-700/50",
     PINK: "bg-pink-300 shadow-pink-300/50 dark:bg-pink-800 dark:shadow-pink-700/50",
@@ -275,7 +295,11 @@ export function getCardColors(color: ColorsEnum) {
     RED: "bg-red-300 shadow-red-300/50 dark:bg-red-800 dark:shadow-red-700/50",
   };
 
-  return { color: cardColors[color], shadow: cardShadows[color] };
+  return {
+    color: cardColors[color],
+    shadow: cardShadows[color],
+    border: cardBorders[color],
+  };
 }
 
 export function getRandomColors(courses: string[]): Record<string, ColorsEnum> {

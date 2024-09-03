@@ -1,11 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Class, classSchema, ColorsEnum, Filter } from "@/lib/definitions";
+import {
+  Class,
+  classSchema,
+  ColorsEnum,
+  Filter,
+  Schedule,
+} from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
-import { createSchedules, getLocalStorage } from "@/lib/utils";
+import {
+  convertTime,
+  createSchedules,
+  getCardColors,
+  getLocalStorage,
+  toProperCase,
+} from "@/lib/utils";
 import { z } from "zod";
 import Calendar from "./Calendar";
 import {
@@ -16,8 +28,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FixedSizeList } from "react-window";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  CalendarClock,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  DoorOpen,
+  FilePen,
+  User,
+} from "lucide-react";
 import FilterSettings from "./FilterSettings";
+import { ScrollArea } from "./ui/scroll-area";
+import { Badge } from "./ui/badge";
 
 type Props = {};
 
@@ -87,7 +109,7 @@ const ScheduleTab = (props: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-row w-full min-h-0 py-16 px-32 gap-4">
+    <div className="flex flex-row w-full min-h-0 py-8 px-16 gap-4">
       <div className="flex flex-col gap-4 grow">
         <Card className="flex flex-row gap-4 p-4">
           <div className="flex flex-row gap-2">
@@ -140,7 +162,82 @@ const ScheduleTab = (props: Props) => {
           <Calendar courses={schedules[active]} colors={colors} />
         )}
       </div>
-      <Card className="w-64"></Card>
+      <ScrollArea className="w-[20%] rounded-lg border">
+        <div className="p-4 flex flex-col gap-2">
+          {schedules[active] &&
+            schedules[active].map((courseClass) => {
+              const schedules = courseClass.schedules.reduce<Schedule[]>(
+                (acc, curr) => {
+                  if (
+                    !acc.some(
+                      (acc) => acc.start === curr.start && acc.end === curr.end
+                    )
+                  )
+                    acc.push(curr);
+                  return acc;
+                },
+                []
+              );
+
+              const days = courseClass.schedules.map((sched) => sched.day);
+
+              const { color, border } = getCardColors(
+                colors[courseClass.course]
+              );
+
+              return (
+                <Card key={courseClass.code} className={`${color}`}>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 font-bold text-lg">
+                      {courseClass.course} [{courseClass.code}]
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 text-sm">
+                    <div className="flex gap-2">
+                      <User size={18} strokeWidth={3} />{" "}
+                      {courseClass.professor !== ""
+                        ? toProperCase(courseClass.professor)
+                        : "TBA"}
+                    </div>
+                    <div className="flex gap-2">
+                      <CalendarClock size={18} strokeWidth={3} />
+                      {days.join("/")}
+                    </div>
+                    {schedules.map((sched) => (
+                      <div
+                        className="flex gap-2 items-center"
+                        key={`${sched.day}${sched.start}`}
+                      >
+                        <Clock size={18} strokeWidth={3} />
+
+                        {`${convertTime(sched.start)} - ${convertTime(
+                          sched.end
+                        )} ${schedules.length > 1 ? `(${sched.day})` : ""}`}
+                      </div>
+                    ))}
+                    {courseClass.rooms.map((room) =>
+                      room !== "" ? (
+                        <div
+                          className="flex gap-2 items-center"
+                          key={`${courseClass.course}${room}`}
+                        >
+                          <DoorOpen size={18} strokeWidth={3} />
+                          {room}
+                        </div>
+                      ) : (
+                        <></>
+                      )
+                    )}
+                    <div className="flex gap-2">
+                      <FilePen size={18} strokeWidth={3} />
+                      {courseClass.remarks}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+        </div>
+      </ScrollArea>
     </div>
   );
 };

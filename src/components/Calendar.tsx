@@ -116,7 +116,7 @@ const Calendar = ({
 
                     return (
                       <>
-                        {schedules.map((sched) => {
+                        {schedules.map((sched, index) => {
                           const start = sched.start;
                           const end = sched.end;
                           return (
