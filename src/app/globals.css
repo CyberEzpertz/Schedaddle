@@ -6,20 +6,20 @@
   :root {
     --background: 0 0% 99%;
     --foreground: 155 100% 9.23%;
-    --muted: 155 12.72% 85.02%;
+    --muted: 155 20.97% 91.24%;
     --muted-foreground: 155 5.07% 35.14%;
     --popover: 0 0% 98%;
     --popover-foreground: 155 71% 1%;
     --card: 0 0% 98%;
-    --card-foreground: 154.47 100% 9.22%;
+    --card-foreground: 154.47 100% 7.31%;
     --border: 155 13% 90%;
     --input: 155 13% 90%;
     --primary: 155 50% 28.72%;
     --primary-foreground: 0 0% 100%;
     --secondary: 160.75 34.51% 83.56%;
     --secondary-foreground: 155 100% 10.77%;
-    --accent: 155 33.04% 85.07%;
-    --accent-foreground: 155 100% 4.62%;
+    --accent: 155 40.86% 83.09%;
+    --accent-foreground: 155 100% 8.85%;
     --destructive: 8 71.13% 54.71%;
     --destructive-foreground: 0 0% 100%;
     --ring: 155 58% 29%;
