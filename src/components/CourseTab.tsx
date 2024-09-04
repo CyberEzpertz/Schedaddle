@@ -15,7 +15,7 @@ import {
 import { toast } from "./ui/use-toast";
 import { Reorder, useDragControls } from "framer-motion";
 import { DragHandleDots1Icon } from "@radix-ui/react-icons";
-import { GripVertical } from "lucide-react";
+import { CircleOff, GripVertical } from "lucide-react";
 
 const CourseTab = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -100,7 +100,7 @@ const CourseTab = () => {
 
   return (
     <div className="flex gap-4 flex-row flex-grow py-16 px-32 w-full self-stretch min-h-0">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-[20%]">
         <Card>
           <CardContent className="pt-6">
             <CourseInput
@@ -110,49 +110,56 @@ const CourseTab = () => {
             />
           </CardContent>
         </Card>
-        <Card className="grow">
+        <Card className="flex flex-col grow">
           <CardHeader>
             <CardTitle>Course Codes</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Reorder.Group
-              className="flex gap-2 row flex-col"
-              axis="y"
-              values={courses}
-              onReorder={handleSwap}
-            >
-              {courses.map((course) => (
-                <Reorder.Item
-                  key={course.courseCode}
-                  value={course}
-                  className="flex flex-row gap-2 items-center"
-                >
-                  <GripVertical
-                    onPointerDown={(e) => controls.start(e)}
-                    className="shrink-0 text-muted-foreground cursor-grab"
-                  />
-                  <Button
-                    variant={
-                      activeCourse?.courseCode === course.courseCode
-                        ? "default"
-                        : "outline"
-                    }
-                    onClick={() => setActiveCourse(course)}
-                    className="w-full"
+          <CardContent className="grow">
+            {courses.length !== 0 ? (
+              <Reorder.Group
+                className="flex gap-2 row flex-col"
+                axis="y"
+                values={courses}
+                onReorder={handleSwap}
+              >
+                {courses.map((course) => (
+                  <Reorder.Item
+                    key={course.courseCode}
+                    value={course}
+                    className="flex flex-row gap-2 items-center"
                   >
-                    {course.courseCode}
-                  </Button>
-                  <Button
-                    size="icon"
-                    className="shrink-0 hover:border-rose-700"
-                    variant="outline"
-                    onClick={() => handleDelete(course.courseCode)}
-                  >
-                    X
-                  </Button>
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
+                    <GripVertical
+                      onPointerDown={(e) => controls.start(e)}
+                      className="shrink-0 text-muted-foreground cursor-grab"
+                    />
+                    <Button
+                      variant={
+                        activeCourse?.courseCode === course.courseCode
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() => setActiveCourse(course)}
+                      className="w-full"
+                    >
+                      {course.courseCode}
+                    </Button>
+                    <Button
+                      size="icon"
+                      className="shrink-0 hover:border-rose-700"
+                      variant="outline"
+                      onClick={() => handleDelete(course.courseCode)}
+                    >
+                      X
+                    </Button>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            ) : (
+              <div className="text-sm text-muted-foreground size-full flex flex-col gap-2 items-center justify-center">
+                <CircleOff />
+                None added yet.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

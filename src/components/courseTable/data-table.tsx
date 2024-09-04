@@ -169,8 +169,10 @@ export function DataTable<TData, TValue>({
       <div className="text-sm text-muted-foreground">
         {`${Object.keys(rowSelection).length} out of ${
           data.length
-        } rows selected. Last Fetched: ${
-          lastFetched && new Date(lastFetched).toLocaleString()
+        } rows selected. ${
+          lastFetched
+            ? `Last Fetched: ${new Date(lastFetched).toLocaleString()}`
+            : ""
         }`}
       </div>
     </div>

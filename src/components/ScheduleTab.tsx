@@ -121,16 +121,23 @@ const ScheduleTab = (props: Props) => {
             >
               <ChevronLeft />
             </Button>
-            <Select onValueChange={(val) => setActive(Number(val))}>
+            <Select
+              onValueChange={(val) => setActive(Number(val))}
+              disabled={schedules.length === 0}
+            >
               <SelectTrigger className="w-64">
-                <SelectValue placeholder={`Schedule ${active}`}>
+                <SelectValue
+                  placeholder={`${
+                    schedules.length !== 0 ? `Schedule ${active}` : "-"
+                  }`}
+                >
                   Schedule {active}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <FixedSizeList
                   width={`100%`}
-                  height={350}
+                  height={Math.min(350, 35 * schedules.length)}
                   itemCount={schedules.length}
                   itemSize={35}
                 >

@@ -37,10 +37,10 @@ const FormSchema = z.object({
 });
 
 const IDInput = () => {
-  const [id, setId] = useState<string>("");
+  const [id, setId] = useState<string | null>("");
 
   useEffect(() => {
-    const newId = JSON.parse(localStorage.getItem("id_number") ?? "{}");
+    const newId = getLocalStorage("id_number");
     setId(newId);
   }, []);
 
