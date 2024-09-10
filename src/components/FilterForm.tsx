@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,20 +22,20 @@ import {
   ModalityEnumSchema,
 } from "@/lib/definitions";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { Toggle } from "./ui/toggle";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Switch } from "./ui/switch";
 import { Card } from "./ui/card";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
-const defaultGeneralSettings = {
+const defaultGeneralSettings: FilterOptions = {
   enabled: true,
   start: 0,
   end: 2400,
   maxPerDay: 10,
   maxConsecutive: 10,
   modalities: ["F2F", "HYBRID", "ONLINE", "PREDOMINANTLY ONLINE", "TENTATIVE"],
-  daysInPerson: [],
+  daysInPerson: ["M"],
 };
 
 const defaultSpecificSettings = Object.fromEntries(
@@ -44,23 +43,22 @@ const defaultSpecificSettings = Object.fromEntries(
     day,
     { ...defaultGeneralSettings, enabled: false },
   ])
-);
+) as Record<DaysEnum, FilterOptions>;
 
 const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
-  const [filter, setFilter] = useState<Filter>(() => {
-    const localFilter = localStorage.getItem("filter_options");
-    return localFilter
-      ? JSON.parse(localFilter)
-      : {
-          general: defaultGeneralSettings,
-          specific: defaultSpecificSettings,
-        };
+  const [filter, setFilter] = useLocalStorage<Filter>("filter_options", {
+    general: defaultGeneralSettings,
+    specific: defaultSpecificSettings,
   });
 
   const form = useForm<Filter>({
     resolver: zodResolver(filterSchema),
-    defaultValues: filter,
+    defaultValues: useMemo(() => filter, [filter]),
   });
+
+  useEffect(() => {
+    form.reset(filter);
+  }, [form, filter]);
 
   function onSubmit(values: Filter) {
     console.log(values);
@@ -75,7 +73,7 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       }
     });
 
-    localStorage.setItem("filter_options", JSON.stringify(values));
+    setFilter(values);
     setOpen(false);
   }
 
@@ -256,11 +254,7 @@ const FilterForm = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                 {!day && (
                   <FormField
                     control={form.control}
-                    name={
-                      day
-                        ? `specific.${day}.daysInPerson`
-                        : "general.daysInPerson"
-                    }
+                    name="general.daysInPerson"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Days in-person</FormLabel>

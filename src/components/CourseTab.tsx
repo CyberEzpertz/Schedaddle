@@ -69,7 +69,6 @@ const CourseTab = () => {
       setActiveCourse(null);
     }
 
-    localStorage.removeItem(`selectedRows_${courseCode}`);
     setSelectedData(courseCode, "DELETE");
     setCourses(newCourses);
   };
