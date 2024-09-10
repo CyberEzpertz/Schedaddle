@@ -75,7 +75,10 @@ const Calendar = ({
           {/* Time Column */}
           <div className="ml-2 flex w-[50px] shrink-0 flex-col items-end">
             {[...Array(16)].map((_, index) => (
-              <div className={cn(`${CELL_HEIGHT} shrink-0`)} key={index}>
+              <div
+                className={cn(`${CELL_HEIGHT} shrink-0`)}
+                key={"time" + index}
+              >
                 {" "}
                 <span className="relative top-[3px] w-7 text-nowrap pr-2 text-right text-xs text-gray-500">
                   {index + 7 > 12 ? index - 5 : index + 7}{" "}
@@ -109,55 +112,51 @@ const Calendar = ({
                   }`}
                   key={day}
                 >
-                  {sortedClasses[day].map((currClass, index) => {
+                  {sortedClasses[day].map((currClass) => {
                     const schedules = currClass.schedules.filter(
                       (sched) => sched.day === day
                     );
 
-                    return (
-                      <>
-                        {schedules.map((sched, index) => {
-                          const start = sched.start;
-                          const end = sched.end;
-                          return (
-                            <Card
-                              key={index}
-                              onMouseEnter={() => setHovered(currClass.code)}
-                              onMouseLeave={() => setHovered(false)}
-                              className={cn(
-                                `border-0 p-3 ${
-                                  hovered === currClass.code &&
-                                  `scale-105 shadow-[0_0px_10px_3px_rgba(0,0,0,0.3)]`
-                                } absolute w-[95%] transition-all ${
-                                  currClass.color
-                                }`,
-                                hovered === currClass.code && currClass.shadow
-                              )}
-                              style={{
-                                height: calculateHeight(start, end),
-                                top: calculateHeight(700, start) + 16,
-                              }}
-                            >
-                              <div className="flex h-full flex-col justify-center gap-1">
-                                <CardTitle className="text-xs font-bold">
-                                  {`${currClass.course} [${currClass.code}]`}
-                                </CardTitle>
-                                <div className="text-xs">
-                                  <div>
-                                    {convertTime(start)} - {convertTime(end)}
-                                  </div>
-                                  {currClass.professor && (
-                                    <div className="overflow-hidden text-ellipsis text-nowrap">
-                                      {`${toProperCase(currClass.professor)}`}
-                                    </div>
-                                  )}
-                                </div>
+                    return schedules.map((sched) => {
+                      const start = sched.start;
+                      const end = sched.end;
+                      return (
+                        <Card
+                          key={`${currClass.course + start + end + sched.day}`}
+                          onMouseEnter={() => setHovered(currClass.code)}
+                          onMouseLeave={() => setHovered(false)}
+                          className={cn(
+                            `border-0 p-3 ${
+                              hovered === currClass.code &&
+                              `scale-105 shadow-[0_0px_10px_3px_rgba(0,0,0,0.3)]`
+                            } absolute w-[95%] transition-all ${
+                              currClass.color
+                            }`,
+                            hovered === currClass.code && currClass.shadow
+                          )}
+                          style={{
+                            height: calculateHeight(start, end),
+                            top: calculateHeight(700, start) + 16,
+                          }}
+                        >
+                          <div className="flex h-full flex-col justify-center gap-1">
+                            <CardTitle className="text-xs font-bold">
+                              {`${currClass.course} [${currClass.code}]`}
+                            </CardTitle>
+                            <div className="text-xs">
+                              <div>
+                                {convertTime(start)} - {convertTime(end)}
                               </div>
-                            </Card>
-                          );
-                        })}
-                      </>
-                    );
+                              {currClass.professor && (
+                                <div className="overflow-hidden text-ellipsis text-nowrap">
+                                  {`${toProperCase(currClass.professor)}`}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    });
                   })}
                 </div>
               );

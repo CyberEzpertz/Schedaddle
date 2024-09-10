@@ -3,13 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Class,
-  classSchema,
-  ColorsEnum,
-  Filter,
-  Schedule,
-} from "@/lib/definitions";
+import { Class, classSchema, ColorsEnum, Schedule } from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
 import {
   convertTime,
@@ -39,7 +33,6 @@ import {
 } from "lucide-react";
 import FilterSettings from "./FilterSettings";
 import { ScrollArea } from "./ui/scroll-area";
-import { Badge } from "./ui/badge";
 
 type Props = {};
 
@@ -222,17 +215,14 @@ const ScheduleTab = (props: Props) => {
                         )} ${schedules.length > 1 ? `(${sched.day})` : ""}`}
                       </div>
                     ))}
-                    {courseClass.rooms.map((room) =>
+                    {courseClass.rooms.map((room, index) =>
                       room !== "" ? (
-                        <div
-                          className="flex gap-2 items-center"
-                          key={`${courseClass.course}${room}`}
-                        >
+                        <div key={room} className="flex gap-2 items-center">
                           <DoorOpen size={18} strokeWidth={3} />
                           {room}
                         </div>
                       ) : (
-                        <></>
+                        <React.Fragment key={index}></React.Fragment>
                       )
                     )}
                     <div className="flex gap-2">
