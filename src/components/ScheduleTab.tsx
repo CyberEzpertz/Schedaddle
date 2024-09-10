@@ -33,10 +33,10 @@ import {
 } from "lucide-react";
 import FilterSettings from "./FilterSettings";
 import { ScrollArea } from "./ui/scroll-area";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import SaveButton from "./SaveButton";
 
-type Props = {};
-
-const ScheduleTab = (props: Props) => {
+const ScheduleTab = () => {
   const [schedules, setSchedules] = useState<Class[][]>([]);
   const [colors, setColors] = useState<Record<string, ColorsEnum>>({});
   const [active, setActive] = useState<number>(0);
@@ -157,6 +157,7 @@ const ScheduleTab = (props: Props) => {
           </div>
           <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
           <FilterSettings />
+          <SaveButton activeSched={schedules[active]} />
         </Card>
         {schedules[active] && (
           <Calendar courses={schedules[active]} colors={colors} />
