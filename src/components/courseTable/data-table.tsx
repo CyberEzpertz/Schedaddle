@@ -27,12 +27,13 @@ import { getLocalStorage, modifySelectedData } from "@/lib/utils";
 import { Class } from "@/lib/definitions";
 import { ScrollArea } from "../ui/scroll-area";
 import { FilterBar } from "./FilterBar";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lastFetched?: Date;
-  activeCourse: string | null;
+  activeCourse: string;
 }
 
 let initialMount = false;
@@ -44,30 +45,23 @@ export function DataTable<TData, TValue>({
   activeCourse,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelection, setRowSelection] = useLocalStorage<RowSelectionState>(
+    "selectedRows",
+    {},
+    activeCourse
+  );
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  useEffect(() => {
-    if (!activeCourse) return;
-
-    const parsed = getLocalStorage("selectedRows_" + activeCourse);
-
-    if (parsed) {
-      setRowSelection(parsed);
-    } else {
-      setRowSelection({});
-    }
-
-    return () => {
-      initialMount = false;
-    };
-  }, [activeCourse]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: (updater) => {
+      const newRowSelectionValue =
+        updater instanceof Function ? updater(rowSelection) : updater;
+      console.log(newRowSelectionValue);
+      setRowSelection(newRowSelectionValue);
+    },
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -90,16 +84,6 @@ export function DataTable<TData, TValue>({
   });
 
   useEffect(() => {
-    if (!activeCourse || !initialMount) {
-      initialMount = true;
-      return;
-    }
-
-    localStorage.setItem(
-      "selectedRows_" + activeCourse,
-      JSON.stringify(rowSelection)
-    );
-
     const selectedRowsData = Object.keys(rowSelection).map(
       (rowId) => data[Number.parseInt(rowId)]
     );

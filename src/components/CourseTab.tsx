@@ -70,6 +70,7 @@ const CourseTab = () => {
     }
 
     localStorage.removeItem(`selectedRows_${courseCode}`);
+    localStorage.getItem("selected_rows");
     modifySelectedData(courseCode, "DELETE");
     setCourses(newCourses);
   };
@@ -150,12 +151,14 @@ const CourseTab = () => {
           </CardContent>
         </Card>
       </div>
-      <DataTable
-        columns={columns}
-        data={activeCourse?.classes ?? []}
-        lastFetched={activeCourse?.lastFetched}
-        activeCourse={activeCourse?.courseCode ?? null}
-      />
+      {activeCourse && (
+        <DataTable
+          columns={columns}
+          data={activeCourse.classes}
+          lastFetched={activeCourse.lastFetched}
+          activeCourse={activeCourse.courseCode}
+        />
+      )}
     </div>
   );
 };
