@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -12,7 +11,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { IdCard } from "lucide-react";
-import { getLocalStorage } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -26,6 +24,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const FormSchema = z.object({
   idNumber: z
@@ -37,16 +36,10 @@ const FormSchema = z.object({
 });
 
 const IDInput = () => {
-  const [id, setId] = useState<string | null>("");
-
-  useEffect(() => {
-    const newId = getLocalStorage("id_number");
-    setId(newId);
-  }, []);
+  const [id, setID] = useLocalStorage<string>("id_number", "");
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    localStorage.setItem("id_number", JSON.stringify(data.idNumber));
-    setId(data.idNumber);
+    setID(data.idNumber);
   };
 
   const form = useForm<z.infer<typeof FormSchema>>({

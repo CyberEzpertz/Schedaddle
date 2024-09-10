@@ -7,19 +7,17 @@ import CourseInput from "./CourseInput";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DataTable } from "./courseTable/data-table";
 import { columns } from "./courseTable/columns";
-import {
-  createSchedules,
-  getLocalStorage,
-  modifySelectedData,
-} from "@/lib/utils";
+import { getLocalStorage, modifySelectedData } from "@/lib/utils";
 import { toast } from "./ui/use-toast";
 import { Reorder, useDragControls } from "framer-motion";
-import { DragHandleDots1Icon } from "@radix-ui/react-icons";
 import { CircleOff, GripVertical } from "lucide-react";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const CourseTab = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [activeCourse, setActiveCourse] = useState<Course | null>(null);
+  const [courses, setCourses] = useLocalStorage<Course[]>("courses", []);
+  const [activeCourse, setActiveCourse] = useState<Course | null>(
+    courses && courses.length > 0 ? courses[0] : null
+  );
   const controls = useDragControls();
 
   const handleFetch = async (courseCode: string) => {
@@ -60,7 +58,6 @@ const CourseTab = () => {
     const newCourses = [...courses, data];
 
     setCourses(newCourses);
-    localStorage.setItem("courses", JSON.stringify(newCourses));
   };
 
   const handleDelete = (courseCode: string) => {
@@ -72,31 +69,21 @@ const CourseTab = () => {
       setActiveCourse(null);
     }
 
-    localStorage.setItem("courses", JSON.stringify(newCourses));
     localStorage.removeItem(`selectedRows_${courseCode}`);
-
     modifySelectedData(courseCode, "DELETE");
-
     setCourses(newCourses);
   };
 
-  const handleSwap = useCallback((newCourses: Course[]) => {
-    setCourses(newCourses);
-    localStorage.setItem("courses", JSON.stringify(newCourses));
-  }, []);
+  const handleSwap = useCallback(
+    (newCourses: Course[]) => {
+      setCourses(newCourses);
+    },
+    [setCourses]
+  );
 
-  // Initialize the stored codes from local storage on component mount
   useEffect(() => {
-    const data = getLocalStorage("courses");
-
-    if (data) {
-      setCourses(data);
-
-      if (data.length !== 0) {
-        setActiveCourse(data[0]);
-      }
-    }
-  }, []);
+    if (courses.length !== 0 && !activeCourse) setActiveCourse(courses[0]);
+  }, [courses, activeCourse]);
 
   return (
     <div className="flex gap-4 flex-row flex-grow py-16 px-32 w-full self-stretch min-h-0">

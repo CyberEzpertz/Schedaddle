@@ -215,7 +215,6 @@ export function modifySelectedData(
 
   selectedData[courseCode] = data;
   localStorage.setItem("selected_data", JSON.stringify(selectedData));
-  return;
 }
 
 export function getCardColors(color: ColorsEnum) {
