@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Class } from "@/lib/definitions";
+import { Class, ClassSchedule, ColorsEnum } from "@/lib/definitions";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Heart, HeartOff, Star, StarHalf, XCircle } from "lucide-react";
+import { Heart, HeartOff } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -26,21 +26,23 @@ import { Input } from "./ui/input";
 
 type Props = {
   activeSched: Class[];
+  colors: Record<string, ColorsEnum>;
 };
 
+// Updated isScheduleSaved to compare only class codes
 const isScheduleSaved = (
-  saved: Record<string, Class[]>,
+  saved: ClassSchedule[],
   sched2: Class[]
 ): string | false => {
   // Iterate through each saved schedule
-  for (const key in saved) {
-    const savedSched = saved[key];
+  for (const savedSched of saved) {
+    const savedSchedClasses = savedSched.classes;
 
     // Check if the saved schedule and sched2 have the same length
-    if (savedSched.length !== sched2.length) continue;
+    if (savedSchedClasses.length !== sched2.length) continue;
 
     // Collect class codes from both savedSched and sched2
-    const savedCodes = savedSched.map((cls) => cls.code).sort();
+    const savedCodes = savedSchedClasses.map((cls) => cls.code).sort();
     const sched2Codes = sched2.map((cls) => cls.code).sort();
 
     // Compare the sorted arrays of class codes
@@ -48,18 +50,18 @@ const isScheduleSaved = (
       (code, index) => code === sched2Codes[index]
     );
 
-    if (isSameSchedule) return key;
+    if (isSameSchedule) return savedSched.name;
   }
 
   // Return false if no matching schedule is found
   return false;
 };
 
-const SaveButton = ({ activeSched }: Props) => {
+const SaveButton = ({ activeSched, colors }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [saved, setSaved] = useLocalStorage<Record<string, Class[]>>(
+  const [saved, setSaved] = useLocalStorage<ClassSchedule[]>(
     "saved_schedules",
-    {}
+    []
   );
 
   const isSaved = isScheduleSaved(saved, activeSched);
@@ -72,7 +74,7 @@ const SaveButton = ({ activeSched }: Props) => {
     })
     .refine(
       (val) => {
-        return !Object.keys(saved).includes(val.name);
+        return !saved.some((schedule) => schedule.name === val.name);
       },
       {
         message: "You already have a schedule with that name.",
@@ -81,15 +83,19 @@ const SaveButton = ({ activeSched }: Props) => {
     );
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    const newSaved = { ...saved, [data.name]: activeSched };
+    const newSchedule: ClassSchedule = {
+      name: data.name,
+      classes: activeSched,
+      colors: colors,
+    };
+
+    const newSaved = [...saved, newSchedule];
     setSaved(newSaved);
     setOpen(false);
   };
 
   const onDelete = (name: string) => {
-    const newSaved = { ...saved };
-    delete newSaved[name];
-
+    const newSaved = saved.filter((schedule) => schedule.name !== name);
     setSaved(newSaved);
     setOpen(false);
   };
@@ -125,8 +131,8 @@ const SaveButton = ({ activeSched }: Props) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[380px]">
-        <DialogHeader className="">
-          <DialogTitle>Schedule Name</DialogTitle>
+        <DialogHeader>
+          <DialogTitle>Save Schedule</DialogTitle>
           <DialogDescription>
             What do you want this schedule to be called?
           </DialogDescription>

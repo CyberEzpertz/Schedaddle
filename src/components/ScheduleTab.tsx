@@ -1,17 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { useEffect, useState } from "react";
+import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Class, classSchema, ColorsEnum, Schedule } from "@/lib/definitions";
+import { Class, classSchema, ColorsEnum } from "@/lib/definitions";
 import { toast } from "./ui/use-toast";
-import {
-  convertTime,
-  createSchedules,
-  getCardColors,
-  getLocalStorage,
-  toProperCase,
-} from "@/lib/utils";
+import { createSchedules, getLocalStorage } from "@/lib/utils";
 import { z } from "zod";
 import Calendar from "./Calendar";
 import {
@@ -22,23 +16,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FixedSizeList } from "react-window";
-import {
-  CalendarClock,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  DoorOpen,
-  FilePen,
-  User,
-} from "lucide-react";
+import { CalendarPlus2, ChevronLeft, ChevronRight } from "lucide-react";
 import FilterSettings from "./FilterSettings";
-import { ScrollArea } from "./ui/scroll-area";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import SaveButton from "./SaveButton";
+import ScheduleOverview from "./ScheduleOverview";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const ScheduleTab = () => {
-  const [schedules, setSchedules] = useState<Class[][]>([]);
-  const [colors, setColors] = useState<Record<string, ColorsEnum>>({});
+  const [schedules, setSchedules] = useLocalStorage<Class[][]>("schedules", []);
+  const [colors, setColors] = useLocalStorage<Record<string, ColorsEnum>>(
+    "course_colors",
+    {}
+  );
   const [active, setActive] = useState<number>(0);
 
   const handleGenerate = () => {
@@ -93,16 +82,8 @@ const ScheduleTab = () => {
     localStorage.setItem("course_colors", JSON.stringify(newColors));
   };
 
-  useEffect(() => {
-    const storedSchedules = getLocalStorage("schedules") ?? [];
-    const storedColors = getLocalStorage("course_colors") ?? {};
-
-    setSchedules(storedSchedules);
-    setColors(storedColors);
-  }, []);
-
   return (
-    <div className="flex flex-row w-full min-h-0 py-8 px-16 gap-4">
+    <div className="flex flex-row w-full min-h-0 py-8 px-16 gap-4 h-full">
       <div className="flex flex-col gap-4 grow">
         <Card className="flex flex-row gap-4 p-4">
           <div className="flex flex-row gap-2">
@@ -115,6 +96,7 @@ const ScheduleTab = () => {
               <ChevronLeft />
             </Button>
             <Select
+              value={`${active}`}
               onValueChange={(val) => setActive(Number(val))}
               disabled={schedules.length === 0}
             >
@@ -134,7 +116,7 @@ const ScheduleTab = () => {
                   itemCount={schedules.length}
                   itemSize={35}
                 >
-                  {({ index, style, isScrolling }) => (
+                  {({ index, style }) => (
                     <SelectItem
                       key={index}
                       value={`${index}`}
@@ -157,85 +139,25 @@ const ScheduleTab = () => {
           </div>
           <Button onClick={() => handleGenerate()}>Generate Schedules</Button>
           <FilterSettings />
-          <SaveButton activeSched={schedules[active]} />
+          {schedules[active] && (
+            <SaveButton activeSched={schedules[active]} colors={colors} />
+          )}
         </Card>
-        {schedules[active] && (
+        {schedules[active] ? (
           <Calendar courses={schedules[active]} colors={colors} />
+        ) : (
+          <Card className="p-6 w-full grow items-center flex flex-row justify-center text-muted-foreground gap-2">
+            <CalendarPlus2 size={100} strokeWidth={1.25} />
+            <span className="flex flex-col gap-2">
+              <span className="font-bold text-xl">
+                No schedules generated yet
+              </span>
+              <span>Try clicking the Generate Schedules Button!</span>
+            </span>
+          </Card>
         )}
       </div>
-      <ScrollArea className="w-[20%] rounded-lg border">
-        <div className="p-4 flex flex-col gap-2">
-          {schedules[active] &&
-            schedules[active].map((courseClass) => {
-              const schedules = courseClass.schedules.reduce<Schedule[]>(
-                (acc, curr) => {
-                  if (
-                    !acc.some(
-                      (acc) => acc.start === curr.start && acc.end === curr.end
-                    )
-                  )
-                    acc.push(curr);
-                  return acc;
-                },
-                []
-              );
-
-              const days = courseClass.schedules.map((sched) => sched.day);
-
-              const { color, border } = getCardColors(
-                colors[courseClass.course]
-              );
-
-              return (
-                <Card key={courseClass.code} className={`${color}`}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 font-bold text-lg">
-                      {courseClass.course} [{courseClass.code}]
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2 text-sm">
-                    <div className="flex gap-2">
-                      <User size={18} strokeWidth={3} />{" "}
-                      {courseClass.professor !== ""
-                        ? toProperCase(courseClass.professor)
-                        : "TBA"}
-                    </div>
-                    <div className="flex gap-2">
-                      <CalendarClock size={18} strokeWidth={3} />
-                      {days.join("/")}
-                    </div>
-                    {schedules.map((sched) => (
-                      <div
-                        className="flex gap-2 items-center"
-                        key={`${sched.day}${sched.start}`}
-                      >
-                        <Clock size={18} strokeWidth={3} />
-
-                        {`${convertTime(sched.start)} - ${convertTime(
-                          sched.end
-                        )} ${schedules.length > 1 ? `(${sched.day})` : ""}`}
-                      </div>
-                    ))}
-                    {courseClass.rooms.map((room, index) =>
-                      room !== "" ? (
-                        <div key={room} className="flex gap-2 items-center">
-                          <DoorOpen size={18} strokeWidth={3} />
-                          {room}
-                        </div>
-                      ) : (
-                        <React.Fragment key={index}></React.Fragment>
-                      )
-                    )}
-                    <div className="flex gap-2">
-                      <FilePen size={18} strokeWidth={3} />
-                      {courseClass.remarks}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-        </div>
-      </ScrollArea>
+      <ScheduleOverview activeSchedule={schedules[active]} colors={colors} />
     </div>
   );
 };

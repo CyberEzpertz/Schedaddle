@@ -4,7 +4,7 @@ import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ModeToggle";
-import { CalendarRange, TableProperties } from "lucide-react";
+import { CalendarRange, Heart, TableProperties } from "lucide-react";
 import IDInput from "./IDInput";
 
 const NavigationBar = () => {
@@ -39,6 +39,13 @@ const NavigationBar = () => {
         >
           <CalendarRange strokeWidth={1.5} size={22} />
           Schedules
+        </Link>
+        <Link
+          href="/saved"
+          className={pathName === "/saved" ? activeButton : normalButton}
+        >
+          <Heart strokeWidth={1.5} size={22} />
+          Saved
         </Link>
       </div>
       <div className="flex flex-row gap-2">

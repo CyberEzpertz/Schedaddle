@@ -10,7 +10,12 @@ import { columns } from "./courseTable/columns";
 import { getLocalStorage, setSelectedData } from "@/lib/utils";
 import { toast } from "./ui/use-toast";
 import { Reorder, useDragControls } from "framer-motion";
-import { CircleOff, GripVertical } from "lucide-react";
+import {
+  CircleOff,
+  GripVertical,
+  MousePointerClick,
+  TextCursorInput,
+} from "lucide-react";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
 const CourseTab = () => {
@@ -85,8 +90,8 @@ const CourseTab = () => {
   }, [courses, activeCourse]);
 
   return (
-    <div className="flex gap-4 flex-row flex-grow py-16 px-32 w-full self-stretch min-h-0">
-      <div className="flex flex-col gap-4 w-[20%]">
+    <div className="flex gap-4 flex-row flex-grow py-8 px-16 w-full self-stretch min-h-0">
+      <div className="flex flex-col gap-4 min-w-64 max-w-64">
         <Card>
           <CardContent className="pt-6">
             <CourseInput
@@ -149,13 +154,21 @@ const CourseTab = () => {
           </CardContent>
         </Card>
       </div>
-      {activeCourse && (
+      {activeCourse ? (
         <DataTable
           columns={columns}
           data={activeCourse.classes}
           lastFetched={activeCourse.lastFetched}
           activeCourse={activeCourse.courseCode}
         />
+      ) : (
+        <Card className="flex flex-row items-center justify-center gap-6 text-muted-foreground p-6 grow">
+          <MousePointerClick strokeWidth={1} size={80} />
+          <span className="flex flex-col gap-1">
+            <span className="font-bold text-xl">No courses yet...</span>
+            <span className="w-80">{`Add courses on the left. Don't forget to set your ID at the top right too!`}</span>
+          </span>
+        </Card>
       )}
     </div>
   );
