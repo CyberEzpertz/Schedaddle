@@ -8,6 +8,7 @@ import {
   Filter,
   Schedule,
 } from "./definitions";
+import { RowSelectionState } from "@tanstack/react-table";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -201,14 +202,17 @@ export function getLocalStorage(name: string) {
   return parsed;
 }
 
-export function modifySelectedData(
-  courseCode: string,
-  data: Class[] | "DELETE"
-) {
+export function setSelectedData(courseCode: string, data: Class[] | "DELETE") {
   const selectedData = getLocalStorage("selected_data") ?? {};
 
   if (data === "DELETE") {
+    const selectedRows =
+      (getLocalStorage("selected_rows") as Record<string, RowSelectionState>) ??
+      {};
+    delete selectedRows[courseCode];
     delete selectedData[courseCode];
+
+    localStorage.setItem("selected_rows", JSON.stringify(selectedRows));
     localStorage.setItem("selected_data", JSON.stringify(selectedData));
     return;
   }

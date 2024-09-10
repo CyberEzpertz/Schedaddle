@@ -22,8 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useRef, useState } from "react";
-import { getLocalStorage, modifySelectedData } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { setSelectedData } from "@/lib/utils";
 import { Class } from "@/lib/definitions";
 import { ScrollArea } from "../ui/scroll-area";
 import { FilterBar } from "./FilterBar";
@@ -36,8 +36,6 @@ interface DataTableProps<TData, TValue> {
   activeCourse: string;
 }
 
-let initialMount = false;
-
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -46,7 +44,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useLocalStorage<RowSelectionState>(
-    "selectedRows",
+    "selected_rows",
     {},
     activeCourse
   );
@@ -59,7 +57,11 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: (updater) => {
       const newRowSelectionValue =
         updater instanceof Function ? updater(rowSelection) : updater;
-      console.log(newRowSelectionValue);
+      const selectedRowsData = Object.keys(newRowSelectionValue).map(
+        (rowId) => data[Number.parseInt(rowId)]
+      );
+
+      setSelectedData(activeCourse, selectedRowsData as Class[]);
       setRowSelection(newRowSelectionValue);
     },
     onColumnFiltersChange: setColumnFilters,
@@ -83,13 +85,7 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  useEffect(() => {
-    const selectedRowsData = Object.keys(rowSelection).map(
-      (rowId) => data[Number.parseInt(rowId)]
-    );
-
-    modifySelectedData(activeCourse, selectedRowsData as Class[]);
-  }, [activeCourse, rowSelection, data]);
+  useEffect(() => {}, [activeCourse]);
 
   return (
     <div className="flex w-full flex-col gap-4">

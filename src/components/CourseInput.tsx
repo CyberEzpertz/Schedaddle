@@ -45,7 +45,6 @@ const CourseInput = ({ fetchHandler, courses, setCourses }: props) => {
         courses.map((course) => course.courseCode)
       );
 
-      localStorage.setItem("courses", JSON.stringify(newData));
       setCourses(newData);
       toast({
         title: "Successfully updated all courses!",

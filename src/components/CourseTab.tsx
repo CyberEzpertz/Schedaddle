@@ -7,7 +7,7 @@ import CourseInput from "./CourseInput";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { DataTable } from "./courseTable/data-table";
 import { columns } from "./courseTable/columns";
-import { getLocalStorage, modifySelectedData } from "@/lib/utils";
+import { getLocalStorage, setSelectedData } from "@/lib/utils";
 import { toast } from "./ui/use-toast";
 import { Reorder, useDragControls } from "framer-motion";
 import { CircleOff, GripVertical } from "lucide-react";
@@ -70,8 +70,7 @@ const CourseTab = () => {
     }
 
     localStorage.removeItem(`selectedRows_${courseCode}`);
-    localStorage.getItem("selected_rows");
-    modifySelectedData(courseCode, "DELETE");
+    setSelectedData(courseCode, "DELETE");
     setCourses(newCourses);
   };
 

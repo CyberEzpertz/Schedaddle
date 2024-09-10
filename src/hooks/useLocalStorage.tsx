@@ -22,7 +22,7 @@ export default function useLocalStorage<T>(
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [key]);
 
   const modifyValue = (newVal: T) => {
     if (!key) {
@@ -31,6 +31,7 @@ export default function useLocalStorage<T>(
     } else {
       const combined = { ...snapshot, [key]: newVal };
       localStorage.setItem(name, JSON.stringify(combined));
+      setSnapshot(combined);
       setValue(newVal);
     }
   };
